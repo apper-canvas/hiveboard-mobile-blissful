@@ -1,7 +1,6 @@
-import usersData from "@/services/mockData/users.json";
-import React from "react";
+// User service - to be implemented with ApperClient or mock data
 
-let users = [...usersData];
+let users = [];
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
