@@ -1,0 +1,218 @@
+[
+  {
+    "Id": 1,
+    "name": "Technology",
+    "description": "Discussion about latest tech trends, programming, and innovation",
+    "icon": "💻",
+    "banner": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "memberCount": 15420,
+    "postCount": 3847,
+    "createdAt": "2024-01-15",
+    "rules": [
+      "Be respectful and professional",
+      "No spam or self-promotion",
+      "Share credible sources",
+      "Keep discussions on-topic"
+    ],
+    "moderators": ["alex_tech", "jane_dev", "mike_admin"],
+    "isJoined": false
+  },
+  {
+    "Id": 2,
+    "name": "Science & Nature",
+    "description": "Explore fascinating discoveries in science, biology, and environmental topics",
+    "icon": "🔬",
+    "banner": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    "memberCount": 9230,
+    "postCount": 2156,
+    "createdAt": "2024-02-20",
+    "rules": [
+      "Cite sources for claims",
+      "Respect scientific consensus",
+      "No pseudoscience",
+      "Foster healthy debate"
+    ],
+    "moderators": ["dr_science", "nature_keeper"],
+    "isJoined": false
+  },
+  {
+    "Id": 3,
+    "name": "Creative Writing",
+    "description": "Share your stories, poetry, and creative works with the community",
+    "icon": "✍️",
+    "banner": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "memberCount": 7840,
+    "postCount": 4521,
+    "createdAt": "2024-01-08",
+    "rules": [
+      "Original content only",
+      "Constructive feedback",
+      "Respect copyright",
+      "Tag content appropriately"
+    ],
+    "moderators": ["author_grace", "editor_tom"],
+    "isJoined": true
+  },
+  {
+    "Id": 4,
+    "name": "Gaming",
+    "description": "Video games, gaming news, and gaming community discussions",
+    "icon": "🎮",
+    "banner": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    "memberCount": 23156,
+    "postCount": 8934,
+    "createdAt": "2023-12-10",
+    "rules": [
+      "No spoilers without tags",
+      "Respect all gaming platforms",
+      "No harassment",
+      "Share gameplay tips and strategies"
+    ],
+    "moderators": ["gamer_pro", "admin_zen", "mod_quick"],
+    "isJoined": true
+  },
+  {
+    "Id": 5,
+    "name": "Health & Wellness",
+    "description": "Tips, advice, and discussions about health, fitness, and mental wellness",
+    "icon": "💪",
+    "banner": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "memberCount": 12780,
+    "postCount": 5632,
+    "createdAt": "2024-01-25",
+    "rules": [
+      "Not a substitute for professional advice",
+      "Share verified health information",
+      "Support mental health discussions",
+      "Be empathetic and supportive"
+    ],
+    "moderators": ["health_coach", "wellness_guide"],
+    "isJoined": false
+  },
+  {
+    "Id": 6,
+    "name": "Food & Cooking",
+    "description": "Share recipes, cooking tips, and food photography from around the world",
+    "icon": "🍳",
+    "banner": "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+    "memberCount": 18430,
+    "postCount": 7245,
+    "createdAt": "2024-01-30",
+    "rules": [
+      "Include ingredients and instructions",
+      "Respect dietary restrictions",
+      "Food photography welcome",
+      "Share kitchen tips and hacks"
+    ],
+    "moderators": ["chef_bobby", "recipe_master"],
+    "isJoined": false
+  },
+  {
+    "Id": 7,
+    "name": "Travel & Adventure",
+    "description": "Travel stories, destination guides, and adventure recommendations",
+    "icon": "✈️",
+    "banner": "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)",
+    "memberCount": 14290,
+    "postCount": 3892,
+    "createdAt": "2024-02-05",
+    "rules": [
+      "Share travel experiences",
+      "Recommend hidden gems",
+      "Respect local cultures",
+      "Include practical travel tips"
+    ],
+    "moderators": ["explorer_dave", "travel_tips"],
+    "isJoined": false
+  },
+  {
+    "Id": 8,
+    "name": "Business & Entrepreneurship",
+    "description": "Startup ideas, business advice, and entrepreneurship discussions",
+    "icon": "💼",
+    "banner": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    "memberCount": 11230,
+    "postCount": 4156,
+    "createdAt": "2024-02-12",
+    "rules": [
+      "Share business knowledge",
+      "No spam or self-promotion",
+      "Respect confidentiality",
+      "Constructive business discussions"
+    ],
+    "moderators": ["founder_sarah", "mentor_john"],
+    "isJoined": false
+  },
+  {
+    "Id": 9,
+    "name": "Arts & Design",
+    "description": "Visual arts, graphic design, and creative design discussions",
+    "icon": "🎨",
+    "banner": "linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%)",
+    "memberCount": 8950,
+    "postCount": 5423,
+    "createdAt": "2024-01-18",
+    "rules": [
+      "Share your artwork",
+      "Constructive criticism only",
+      "Credit original artists",
+      "Portfolio sharing welcome"
+    ],
+    "moderators": ["artist_luna", "design_pro"],
+    "isJoined": true
+  },
+  {
+    "Id": 10,
+    "name": "Music & Audio",
+    "description": "Music production, audio engineering, and music discussions",
+    "icon": "🎵",
+    "banner": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "memberCount": 10560,
+    "postCount": 3287,
+    "createdAt": "2024-02-01",
+    "rules": [
+      "Share your music",
+      "Respect copyright",
+      "Production tips welcome",
+      "Discuss all music genres"
+    ],
+    "moderators": ["producer_max", "audio_tech"],
+    "isJoined": false
+  },
+  {
+    "Id": 11,
+    "name": "Education & Learning",
+    "description": "Learning resources, educational content, and skill development",
+    "icon": "📚",
+    "banner": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "memberCount": 16890,
+    "postCount": 6234,
+    "createdAt": "2024-01-20",
+    "rules": [
+      "Share learning resources",
+      "Ask questions respectfully",
+      "Help others learn",
+      "Discuss educational topics"
+    ],
+    "moderators": ["teacher_mark", "tutor_emma"],
+    "isJoined": false
+  },
+  {
+    "Id": 12,
+    "name": "Sports & Fitness",
+    "description": "Sports news, fitness routines, and athletic discussions",
+    "icon": "⚽",
+    "banner": "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+    "memberCount": 19870,
+    "postCount": 7892,
+    "createdAt": "2024-01-05",
+    "rules": [
+      "Respect all sports",
+      "Share fitness goals and progress",
+      "Sports news and updates",
+      "Support and encourage others"
+    ],
+    "moderators": ["coach_pete", "athlete_sam"],
+    "isJoined": true
+  }
+]
