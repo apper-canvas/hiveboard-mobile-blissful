@@ -34,36 +34,40 @@ const Notifications = () => {
     { id: 'unread', label: 'Unread', icon: 'Eye' }
   ];
 
-  const loadNotifications = async () => {
+const loadNotifications = async () => {
     try {
       setLoading(true);
       setError(null);
-      
       const data = await notificationService.getAll();
-      setNotifications(data);
+      setNotifications(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error loading notifications:', err);
       setError(err.message || 'Failed to load notifications');
     } finally {
       setLoading(false);
     }
-};
+  };
 
-const filterNotifications = () => {
-  let filtered = notifications;
-  
-  if (activeFilter === 'unread') {
-    filtered = notifications.filter(n => !n.isRead);
-  } else if (activeFilter !== 'all') {
-    filtered = notifications.filter(n => n.type === activeFilter);
-  }
-  
-  setFilteredNotifications(filtered);
-  
-  // Group filtered notifications
-  const grouped = notificationService.groupNotifications(filtered);
-  setGroupedNotifications(grouped);
-};
+  const filterNotifications = () => {
+    if (!Array.isArray(notifications)) {
+      setFilteredNotifications([]);
+      setGroupedNotifications([]);
+      return;
+    }
+
+    let filtered = notifications;
+    
+    if (activeFilter === 'unread') {
+      filtered = notifications.filter(n => !n.isRead);
+    } else if (activeFilter !== 'all') {
+      filtered = notifications.filter(n => n.type === activeFilter);
+    }
+    
+    setFilteredNotifications(filtered);
+    
+    const grouped = notificationService.groupNotifications(filtered);
+    setGroupedNotifications(grouped);
+  };
 
   const toggleGroupExpansion = (groupKey) => {
     setExpandedGroups(prev => {
@@ -221,16 +225,16 @@ const filterNotifications = () => {
     }
   };
 const renderNotificationContent = (notification) => {
-  const icon = notificationService.getNotificationIcon(notification.type);
-  const color = notificationService.getNotificationColor(notification.type);
-  
-  return (
-    <div className="flex items-start gap-3">
-      <div className={cn(
-        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-        notification.isRead ? "bg-gray-100" : "bg-blue-50"
-      )}>
-        <ApperIcon
+    const icon = notificationService.getNotificationIcon(notification.type);
+    const color = notificationService.getNotificationColor(notification.type);
+    
+    return (
+      <div className="flex items-start gap-3">
+        <div className={cn(
+          "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+          notification.isRead ? "bg-gray-100" : "bg-blue-50"
+        )}>
+          <ApperIcon
             name={icon} 
             className={cn("w-5 h-5", notification.isRead ? "text-gray-500" : color)} 
           />
@@ -369,11 +373,11 @@ const renderNotificationContent = (notification) => {
             </button>
           )}
           
-          <span className="text-xs text-gray-500">
+<span className="text-xs text-gray-500">
             {formatDistanceToNow(new Date(group.latestTimestamp))} ago
           </span>
         </div>
-</div>
+      </div>
     );
   };
 
@@ -389,8 +393,7 @@ const renderNotificationContent = (notification) => {
     return <Loading className="min-h-screen" />;
   }
 
-  if (error) {
-    return (
+return (
       <ErrorView 
         message={error} 
         onRetry={loadNotifications}
@@ -399,7 +402,7 @@ const renderNotificationContent = (notification) => {
     );
   }
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = Array.isArray(notifications) ? notifications.filter(n => !n.isRead).length : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -475,10 +478,10 @@ const renderNotificationContent = (notification) => {
                       <span className="ml-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
                         {count}
                       </span>
-                    )}
+)}
                   </button>
                 );
-})}
+              })}
             </div>
           </div>
         </div>
