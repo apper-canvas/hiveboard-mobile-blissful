@@ -371,9 +371,9 @@ const renderNotificationContent = (notification) => {
                 'Mark all read'
               )}
             </button>
-          )}
+)}
           
-<span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500">
             {formatDistanceToNow(new Date(group.latestTimestamp))} ago
           </span>
         </div>
@@ -389,11 +389,12 @@ const renderNotificationContent = (notification) => {
     filterNotifications();
   }, [notifications, activeFilter]);
 
-  if (loading) {
+if (loading) {
     return <Loading className="min-h-screen" />;
   }
 
-return (
+  if (error) {
+    return (
       <ErrorView 
         message={error} 
         onRetry={loadNotifications}
