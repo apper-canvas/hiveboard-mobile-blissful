@@ -212,11 +212,13 @@ useEffect(() => {
             />
             <VoteButtons 
               mode="like"
+<VoteButtons 
+              mode="like"
               likes={currentPost?.likes || 0}
               isLiked={currentPost?.isLiked || false}
               onLike={handleLike}
             />
-</div>
+          </div>
         </div>
 
         {/* Content */}
@@ -241,32 +243,9 @@ useEffect(() => {
               className="w-4 h-4 text-gray-400 ml-auto"
             />
           </div>
-          </div>
-        </div>
-{/* Content */}
-        <div className="flex-1 min-w-0">
-          {/* Metadata */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <Link 
-              to={`/r/${currentPost?.communityName}`}
-              className="community-link font-semibold text-gray-900 hover:text-primary transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              r/{currentPost?.communityName}
-            </Link>
-            <span>•</span>
-            <span>u/{currentPost?.authorUsername}</span>
-            <span>•</span>
-            <span>{currentPost?.timestamp && isValid(new Date(currentPost?.timestamp)) 
-              ? `${formatDistanceToNow(new Date(currentPost?.timestamp))} ago`
-              : 'Date unavailable'}</span>
-<ApperIcon
-              name="MoreHorizontal"
-              className="w-4 h-4 text-gray-400 ml-auto"
-            />
-          </div>
+
           {/* Title */}
-          <h2 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary transition-colors">
+<h2 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary transition-colors">
             {currentPost?.title}
           </h2>
 
@@ -275,7 +254,8 @@ useEffect(() => {
             <p className="text-gray-700 mb-3 line-clamp-3">
               {currentPost?.content.length > 200 
                 ? `${currentPost?.content.substring(0, 200)}...` 
-</p>
+                : currentPost?.content}
+            </p>
           )}
 
           {/* Actions */}
@@ -294,10 +274,9 @@ useEffect(() => {
                 <div className="text-xs text-gray-500 font-semibold">
                   Poll ended
                 </div>
-              )}
+)}
 
               {/* Show Results or Voting Interface */}
-              {showResults || !currentPost?.pollActive ? (
               {showResults || !currentPost?.pollActive ? (
                 <div className="space-y-2">
                   {currentPost?.pollOptions?.map((opt, idx) => {
@@ -319,7 +298,7 @@ useEffect(() => {
                     );
                   })}
                 </div>
-) : (
+              ) : (
                 <div className="space-y-2">
                   {currentPost?.pollOptions?.map((opt, idx) => (
                     <button
@@ -347,9 +326,10 @@ useEffect(() => {
                   className="w-full p-2 text-primary text-sm font-medium hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   View Results
-                </button>
+</button>
               )}
-{/* End Poll Early for Creator */}
+
+              {/* End Poll Early for Creator */}
               {currentPost?.pollActive && currentPost?.authorUsername === user?.username && (
                 <button
                   onClick={(e) => {
@@ -370,9 +350,10 @@ useEffect(() => {
                   <AwardDisplay awards={postAwards} />
                 </div>
               )}
+
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-<ApperIcon name="MessageSquare" className="w-4 h-4" />
+                  <ApperIcon name="MessageSquare" className="w-4 h-4" />
                   <span>{currentPost?.commentCount} comments</span>
                 </div>
                 <button 
@@ -402,6 +383,7 @@ useEffect(() => {
                 >
                   <ApperIcon name="Gift" className="w-4 h-4" />
                   <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
+<span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
                 </button>
               </div>
             </>
@@ -421,7 +403,6 @@ useEffect(() => {
             />
           </div>
         )}
-</div>
 
       {/* Award Modal */}
       <AwardModal
