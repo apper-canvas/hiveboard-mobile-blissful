@@ -1,4 +1,4 @@
-import messagesData from '@/services/mockData/messages.json';
+// Mock data and services for messaging functionality
 
 // Helper function to simulate network delay
 function delay(ms) {
@@ -159,8 +159,13 @@ const messageThreads = {
   ]
 };
 
-let conversations = [...messagesData];
-let nextConversationId = Math.max(...conversations.map(c => c.Id)) + 1;
+let conversations = Object.keys(messageThreads).map((convId) => ({
+  Id: parseInt(convId),
+  participantIds: [1, 2, 3, 4, 5, 6],
+  lastMessage: messageThreads[parseInt(convId)][messageThreads[parseInt(convId)].length - 1],
+  updatedAt: messageThreads[parseInt(convId)][messageThreads[parseInt(convId)].length - 1].timestamp
+}));
+let nextConversationId = Math.max(...Object.keys(messageThreads).map(Number)) + 1;
 let nextMessageId = Math.max(...Object.values(messageThreads).flat().map(m => m.Id)) + 1;
 
 export const messageService = {
