@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAuth } from '@/layouts/Root';
-import Link from 'react-router-dom';
 
 function Login() {
   const { isInitialized } = useAuth();
