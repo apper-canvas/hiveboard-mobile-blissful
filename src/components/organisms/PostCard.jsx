@@ -210,8 +210,6 @@ useEffect(() => {
               userVote={currentPost?.userVote}
               onVote={handleVote}
             />
-            <VoteButtons 
-              mode="like"
 <VoteButtons 
               mode="like"
               likes={currentPost?.likes || 0}
@@ -381,9 +379,8 @@ useEffect(() => {
                   className="flex items-center gap-2 hover:text-primary transition-colors group"
                   title="Give Award"
                 >
-                  <ApperIcon name="Gift" className="w-4 h-4" />
+<ApperIcon name="Gift" className="w-4 h-4" />
                   <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
-<span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">Award</span>
                 </button>
               </div>
             </>
@@ -400,20 +397,21 @@ useEffect(() => {
               onError={(e) => {
                 e.target.style.display = "none";
               }}
+}}
             />
           </div>
         )}
 
-      {/* Award Modal */}
-      <AwardModal
-        isOpen={showAwardModal}
-        onClose={() => setShowAwardModal(false)}
-        onAwardGiven={handleAwardGiven}
-        contentType="post"
-        contentId={currentPost?.Id}
-      />
+        {/* Award Modal */}
+        <AwardModal
+          isOpen={showAwardModal}
+          onClose={() => setShowAwardModal(false)}
+          onAwardGiven={handleAwardGiven}
+          contentType="post"
+          contentId={currentPost?.Id}
+        />
+      </div>
     </div>
   );
-};
 
 export default PostCard;
