@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
 import { commentService } from "@/services/api/commentService";
@@ -62,13 +62,12 @@ setPost(postData);
     }
   }, [postId, user?.Id]);
 
-  // Effect now depends only on postId and loadPost is stable
+// Effect now depends only on postId and loadPost is stable
   useEffect(() => {
     if (postId) {
-      loadPost()
+      loadPost();
     }
-  }, [postId, loadPost])
-
+  }, [postId, loadPost]);
   const handleVote = async (voteType) => {
     if (!post) return;
     
@@ -98,11 +97,10 @@ setPost(postData);
       } else {
         toast.success("Like removed");
       }
-    } catch (error) {
+} catch (error) {
       toast.error("Failed to like post. Please try again.");
     }
   };
-};
 
   const handleSave = async () => {
     try {
@@ -166,11 +164,11 @@ setPost(postData);
     }
   };
 
-  return (
+return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Post Content */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-<div className="flex gap-6 p-6">
+        <div className="flex gap-6 p-6">
           {/* Vote Buttons */}
           <div className="flex-shrink-0">
             <div className="flex gap-4">
@@ -200,7 +198,6 @@ setPost(postData);
                 className="font-semibold text-gray-900 hover:text-primary transition-colors"
               >
                 r/{post.communityName}
-r/{post.communityName}
               </Link>
               <span>•</span>
               <span>Posted by u/{post.authorUsername}</span>
@@ -212,12 +209,12 @@ r/{post.communityName}
                 name="MoreHorizontal"
                 className="w-4 h-4 text-gray-400 ml-auto"
               />
+            </div>
 
             {/* Title */}
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
               {post.title}
             </h1>
-
             {/* Content */}
             {post.content && (
               <div className="prose prose-gray max-w-none mb-6">
@@ -241,7 +238,7 @@ r/{post.communityName}
               </div>
             )}
 
-{/* Actions */}
+            {/* Actions */}
             <div className="flex items-center gap-6 text-sm text-gray-600 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
                 <ApperIcon name="MessageSquare" className="w-4 h-4" />
@@ -281,10 +278,10 @@ r/{post.communityName}
           </div>
         </div>
       </div>
-{/* Comments Section */}
-      <CommentSection postId={postId} onCommentCountChange={setCommentCount} />
+      </div>
 
-      {/* Awards Display */}
+      {/* Comments Section */}
+      <CommentSection postId={postId} onCommentCountChange={setCommentCount} />
       {postAwards.length > 0 && (
         <div className="flex items-center gap-4 py-4 border-t border-gray-200">
           <span className="text-sm font-semibold text-gray-700">Awards:</span>
@@ -292,20 +289,19 @@ r/{post.communityName}
         </div>
       )}
 
-      {/* Award Modal */}
+{/* Award Modal */}
       {canAward && (
         <AwardModal
           postId={post.Id}
           isOpen={showAwardModal}
-          onAwardGiven={() => {
-            const updatedAwards = awardService.getPostAwards(post.Id);
+          onAwardGiven={async () => {
+            const updatedAwards = await awardService.getPostAwards(post.Id);
             setPostAwards(updatedAwards || []);
             toast.success('Award given successfully!');
           }}
           onClose={() => setShowAwardModal(false)}
         />
       )}
-    </div>
+</div>
   );
-}
 }
