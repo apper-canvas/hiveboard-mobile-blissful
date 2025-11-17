@@ -4,6 +4,7 @@ import { communityService } from "@/services/api/communityService";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
+import Messages from "@/components/pages/Messages";
 import Saved from "@/components/pages/Saved";
 import Hidden from "@/components/pages/Hidden";
 import Home from "@/components/pages/Home";
@@ -144,18 +145,17 @@ if (communityName) {
                   <ApperIcon name="Crown" className="w-5 h-5 text-accent" />
                   Moderators
                 </h3>
-                
-                <div className="space-y-3">
+<div className="space-y-3">
                   {moderators.map((mod, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-green-600 flex items-center justify-center text-white font-bold text-sm">
-                        {mod.username.charAt(0).toUpperCase()}
+                        {(mod?.username || 'U').charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold text-sm text-gray-900">u/{mod.username}</div>
-                        <div className="text-xs text-gray-600">{mod.role}</div>
+                        <div className="font-semibold text-sm text-gray-900">u/{mod?.username || 'unknown'}</div>
+                        <div className="text-xs text-gray-600">{mod?.role || 'Moderator'}</div>
                       </div>
-                      {mod.isActive && (
+                      {mod?.isActive && (
                         <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                       )}
                     </div>
@@ -169,23 +169,22 @@ if (communityName) {
                   <ApperIcon name="GitBranch" className="w-5 h-5 text-secondary" />
                   Related Communities
                 </h3>
-                
-                <div className="space-y-2">
+<div className="space-y-2">
                   {relatedCommunities.map((relatedCommunity, index) => (
                     <Link
                       key={index}
-                      to={`/r/${relatedCommunity.name}`}
+                      to={`/r/${relatedCommunity?.name || ''}`}
                       className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-blue-600 flex items-center justify-center text-white font-bold text-sm">
-                        {relatedCommunity.name.charAt(0).toUpperCase()}
+                        {(relatedCommunity?.name || 'C').charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-sm truncate">
-                          r/{relatedCommunity.name}
+                          r/{relatedCommunity?.name || 'community'}
                         </div>
                         <div className="text-xs text-gray-600">
-                          {formatMemberCount(relatedCommunity.memberCount)} members
+                          {formatMemberCount(relatedCommunity?.memberCount || 0)} members
                         </div>
                       </div>
                     </Link>
