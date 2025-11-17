@@ -1,37 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/layouts/Root';
-import { awardService } from '@/services/api/awardService';
-import { toast } from 'react-toastify';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import { cn } from '@/utils/cn';
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { cn } from "@/utils/cn";
+import { awardService } from "@/services/api/awardService";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import { useAuth } from "@/layouts/Root";
 
 const AwardModal = ({ isOpen, onClose, onAwardGiven, contentType = 'post', contentId = null }) => {
-  const [awards, setAwards] = useState([]);
+  const { user } = useAuth();
   const [selectedAward, setSelectedAward] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [reason, setReason] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [awards, setAwards] = useState([]);
 
   useEffect(() => {
+    const loadAwards = async () => {
+      try {
+        const awardsList = await awardService.getAwards();
+        setAwards(awardsList || []);
+      } catch (error) {
+        console.error('Failed to load awards:', error);
+        toast.error('Failed to load awards');
+      }
+    };
     if (isOpen) {
-      const allAwards = awardService.getAllAwards();
-      setAwards(allAwards);
-      setSelectedAward(allAwards[0] || null);
+      loadAwards();
     }
   }, [isOpen]);
-
-const handleGiveAward = async () => {
-    const { user } = useAuth();
+  const handleGiveAward = async () => {
+    if (!user) {
+      toast.error('You must be logged in to give awards');
+      return;
+    }
     
     if (!user?.isAuthenticated) {
       toast.error("You need to login first to perform this operation");
       return;
     }
     
-    if (!selectedAward || contentId === null) {
+if (!selectedAward || contentId === null) {
       toast.error('Please select an award');
       return;
     }
-    setIsLoading(true);
+    setLoading(true);
 
     // Simulate coin deduction and award process
     setTimeout(() => {
@@ -44,11 +56,11 @@ const handleGiveAward = async () => {
 
         toast.success(`${selectedAward.name} awarded! -${selectedAward.cost} coins`);
         onAwardGiven?.(selectedAward);
-        setIsLoading(false);
+        setLoading(false);
         onClose();
       } catch (error) {
         toast.error('Failed to give award');
-        setIsLoading(false);
+        setLoading(false);
       }
     }, 500);
   };
@@ -152,20 +164,22 @@ const handleGiveAward = async () => {
           </div>
 
           {/* Footer */}
+{/* Footer */}
           <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
             <Button
               variant="secondary"
               onClick={onClose}
-              disabled={isLoading}
+              disabled={loading}
             >
               Cancel
             </Button>
             <Button
               onClick={handleGiveAward}
-              disabled={!selectedAward || isLoading}
+              disabled={!selectedAward || loading}
+disabled={!selectedAward || loading}
               className="flex items-center gap-2"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   Giving...

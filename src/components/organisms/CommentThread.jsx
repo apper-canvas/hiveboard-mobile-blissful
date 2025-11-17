@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useAuth } from "@/layouts/Root";
 import { formatDistanceToNow, isValid } from "date-fns";
-import { commentService } from "@/services/api/commentService";
-import { awardService } from "@/services/api/awardService";
 import { toast } from "react-toastify";
 import { cn } from "@/utils/cn";
+import { awardService } from "@/services/api/awardService";
+import { commentService } from "@/services/api/commentService";
 import ApperIcon from "@/components/ApperIcon";
 import AwardDisplay from "@/components/molecules/AwardDisplay";
 import VoteButtons from "@/components/molecules/VoteButtons";
 import AwardModal from "@/components/molecules/AwardModal";
 import CommentForm from "@/components/molecules/CommentForm";
+import { useAuth } from "@/layouts/Root";
 
 const CommentThread = ({ 
   comment, 
@@ -17,28 +17,23 @@ const CommentThread = ({
   onCommentVoted, 
   depth = 0 
 }) => {
-const [currentComment, setCurrentComment] = useState(comment);
-const [showReplyForm, setShowReplyForm] = useState(false);
+  const { user } = useAuth();
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [showReplies, setShowReplies] = useState(false);
+  const [currentComment, setCurrentComment] = useState(comment);
+  const [isSaved, setIsSaved] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [commentAwards, setCommentAwards] = useState(comment.awards || []);
+  const [showReplyForm, setShowReplyForm] = useState(false);
   const [showAwardModal, setShowAwardModal] = useState(false);
-  const [isSaved, setIsSaved] = useState(commentService.isCommentSaved(comment.Id));
-  // Calculate total reply count recursively
-  const getTotalReplyCount = (comment) => {
-    if (!comment.children || comment.children.length === 0) return 0;
-    
-    let count = comment.children.length;
-    comment.children.forEach(child => {
-      count += getTotalReplyCount(child);
-    });
-    return count;
-  };
-
-  const totalReplyCount = getTotalReplyCount(currentComment);
-
-const handleVote = async (voteType) => {
-    const { user } = useAuth();
-    
+  const [commentAwards, setCommentAwards] = useState([]);
+  
+  const totalReplyCount = currentComment?.children?.length || 0;
+  const handleVote = async (voteType) => {
+    if (!user) {
+      toast.error('You must be logged in to vote');
+      return;
+    }
     if (!user?.isAuthenticated) {
       toast.error("You need to login first to perform this operation");
       return;
@@ -61,8 +56,10 @@ const handleVote = async (voteType) => {
     }
   };
 const handleLike = async () => {
-    const { user } = useAuth();
-    
+    if (!user) {
+      toast.error('You must be logged in to like');
+      return;
+    }
     if (!user?.isAuthenticated) {
       toast.error("You need to login first to perform this operation");
       return;
@@ -84,8 +81,10 @@ const handleLike = async () => {
 };
   
 const handleSave = async () => {
-    const { user } = useAuth();
-    
+    if (!user) {
+      toast.error('You must be logged in to save');
+      return;
+    }
     if (!user?.isAuthenticated) {
       toast.error("You need to login first to perform this operation");
       return;

@@ -147,7 +147,7 @@ async getByCommunity(communityName, filter = "hot", limit = 10, offset = 0, post
   },
 async create(postData) {
     await delay(400);
-    const newPost = {
+const newPost = {
       Id: Math.max(...posts.map(p => p.Id)) + 1,
       title: postData.title,
       content: postData.content,
@@ -160,6 +160,8 @@ async create(postData) {
       isSpoiler: postData.isSpoiler || false,
       isOC: postData.isOC || false,
       upvotes: 1,
+      downvotes: 0,
+    };
     posts.unshift(newPost);
     if (newPost.contentType === 'poll') {
       pollVotes[newPost.Id] = { voters: [], votes: {} };
