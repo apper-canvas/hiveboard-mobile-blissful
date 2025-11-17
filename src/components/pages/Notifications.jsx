@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-toastify";
-import { notificationService } from "@/services/api/notificationService";
 import { cn } from "@/utils/cn";
+import notificationService from "@/services/api/notificationService";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Empty from "@/components/ui/Empty";
 import ErrorView from "@/components/ui/ErrorView";
 import Button from "@/components/atoms/Button";
-
 const Notifications = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
@@ -48,23 +47,23 @@ const Notifications = () => {
     } finally {
       setLoading(false);
     }
-  };
+};
 
 const filterNotifications = () => {
-    let filtered = notifications;
-    
-    if (activeFilter === 'unread') {
-      filtered = notifications.filter(n => !n.isRead);
-    } else if (activeFilter !== 'all') {
-      filtered = notifications.filter(n => n.type === activeFilter);
-    }
-    
-    setFilteredNotifications(filtered);
-    
-    // Group filtered notifications
-    const grouped = notificationService.groupNotifications(filtered);
-    setGroupedNotifications(grouped);
-  };
+  let filtered = notifications;
+  
+  if (activeFilter === 'unread') {
+    filtered = notifications.filter(n => !n.isRead);
+  } else if (activeFilter !== 'all') {
+    filtered = notifications.filter(n => n.type === activeFilter);
+  }
+  
+  setFilteredNotifications(filtered);
+  
+  // Group filtered notifications
+  const grouped = notificationService.groupNotifications(filtered);
+  setGroupedNotifications(grouped);
+};
 
   const toggleGroupExpansion = (groupKey) => {
     setExpandedGroups(prev => {
@@ -221,18 +220,17 @@ const filterNotifications = () => {
       handleMarkAsRead(notification.Id);
     }
   };
-
 const renderNotificationContent = (notification) => {
-    const icon = notificationService.getNotificationIcon(notification.type);
-    const color = notificationService.getNotificationColor(notification.type);
-    
-    return (
-      <div className="flex items-start gap-3">
-        <div className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-          notification.isRead ? "bg-gray-100" : "bg-blue-50"
-        )}>
-          <ApperIcon 
+  const icon = notificationService.getNotificationIcon(notification.type);
+  const color = notificationService.getNotificationColor(notification.type);
+  
+  return (
+    <div className="flex items-start gap-3">
+      <div className={cn(
+        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
+        notification.isRead ? "bg-gray-100" : "bg-blue-50"
+      )}>
+        <ApperIcon
             name={icon} 
             className={cn("w-5 h-5", notification.isRead ? "text-gray-500" : color)} 
           />
@@ -375,7 +373,7 @@ const renderNotificationContent = (notification) => {
             {formatDistanceToNow(new Date(group.latestTimestamp))} ago
           </span>
         </div>
-      </div>
+</div>
     );
   };
 
@@ -480,12 +478,12 @@ const renderNotificationContent = (notification) => {
                     )}
                   </button>
                 );
-              })}
+})}
             </div>
           </div>
         </div>
 
-{/* Notifications List */}
+        {/* Notifications List */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           {groupedNotifications.length === 0 ? (
             <div className="p-8">

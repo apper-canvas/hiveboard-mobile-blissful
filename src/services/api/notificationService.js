@@ -250,6 +250,197 @@ export const notificationService = {
       return { success: false };
     }
   },
+groupNotifications: (notifications) => {
+    const grouped = {};
+    
+    notifications.forEach(notification => {
+      const date = new Date(notification.createdAt_c || notification.timestamp);
+      const dateKey = date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = {
+          key: dateKey,
+          date: dateKey,
+          title: dateKey,
+          type: notification.type_c,
+          notifications: [],
+          count: 0,
+          latestTimestamp: date,
+          unreadCount: 0
+        };
+      }
+      
+      grouped[dateKey].notifications.push(notification);
+      grouped[dateKey].count += 1;
+      grouped[dateKey].unreadCount += notification.isRead_c ? 0 : 1;
+      
+      if (date > grouped[dateKey].latestTimestamp) {
+        grouped[dateKey].latestTimestamp = date;
+      }
+    });
+    
+    return Object.values(grouped).sort((a, b) => 
+      new Date(b.latestTimestamp) - new Date(a.latestTimestamp)
+    );
+  },
+
+  getNotificationIcon: (type) => {
+    const iconMap = {
+      upvote_post: 'ArrowUp',
+      upvote_comment: 'ArrowUp',
+      reply: 'MessageCircle',
+      mention: 'AtSign',
+      new_follower: 'UserPlus',
+      award: 'Award',
+      content_removed: 'Trash2',
+      ban: 'Shield',
+      mod_invite: 'Crown',
+      message: 'Mail',
+      comment: 'MessageCircle',
+      like: 'Heart',
+      follow: 'UserPlus',
+      other: 'Bell'
+    };
+    
+    return iconMap[type] || 'Bell';
+  },
+
+  getNotificationColor: (type) => {
+    const colorMap = {
+      upvote_post: 'text-green-500',
+      upvote_comment: 'text-green-500',
+      reply: 'text-blue-500',
+      mention: 'text-purple-500',
+      new_follower: 'text-pink-500',
+      award: 'text-yellow-500',
+      content_removed: 'text-red-500',
+      ban: 'text-red-600',
+      mod_invite: 'text-indigo-500',
+      message: 'text-blue-600',
+      comment: 'text-blue-500',
+      like: 'text-red-500',
+      follow: 'text-pink-500',
+      other: 'text-gray-500'
+    };
+    
+    return colorMap[type] || 'text-gray-500';
+  },
+
+  getGroupedByType: async (filters = {}) => {
+    try {
+      const result = await notificationService.getAll(filters);
+      const grouped = {};
+
+      result.data?.forEach(notification => {
+        const type = notification.type_c || 'other';
+        if (!grouped[type]) {
+          grouped[type] = [];
+        }
+        grouped[type].push(notification);
+      });
+
+      return { ...result, data: grouped };
+    } catch (error) {
+      console.error('Error in getGroupedByType:', error?.message || error);
+      return { data: {}, total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
+    }
+  },
+
+  getDisplayName: (type) => {
+    const displayMap = {
+      like: 'Likes',
+      comment: 'Comments',
+      award: 'Awards',
+      mention: 'Mentions',
+      follow: 'Follows',
+      message: 'Messages',
+    };
+
+    return displayMap[type] || 'Notification';
+  },
+groupNotifications: (notifications) => {
+    const grouped = {};
+    
+    notifications.forEach(notification => {
+      const date = new Date(notification.createdAt_c || notification.timestamp);
+      const dateKey = date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = {
+          key: dateKey,
+          date: dateKey,
+          title: dateKey,
+          type: notification.type_c,
+          notifications: [],
+          count: 0,
+          latestTimestamp: date,
+          unreadCount: 0
+        };
+      }
+      
+      grouped[dateKey].notifications.push(notification);
+      grouped[dateKey].count += 1;
+      grouped[dateKey].unreadCount += notification.isRead_c ? 0 : 1;
+      
+      if (date > grouped[dateKey].latestTimestamp) {
+        grouped[dateKey].latestTimestamp = date;
+      }
+    });
+    
+    return Object.values(grouped).sort((a, b) => 
+      new Date(b.latestTimestamp) - new Date(a.latestTimestamp)
+    );
+  },
+
+  getNotificationIcon: (type) => {
+    const iconMap = {
+      upvote_post: 'ArrowUp',
+      upvote_comment: 'ArrowUp',
+      reply: 'MessageCircle',
+      mention: 'AtSign',
+      new_follower: 'UserPlus',
+      award: 'Award',
+      content_removed: 'Trash2',
+      ban: 'Shield',
+      mod_invite: 'Crown',
+      message: 'Mail',
+      comment: 'MessageCircle',
+      like: 'Heart',
+      follow: 'UserPlus',
+      other: 'Bell'
+    };
+    
+    return iconMap[type] || 'Bell';
+  },
+
+  getNotificationColor: (type) => {
+    const colorMap = {
+      upvote_post: 'text-green-500',
+      upvote_comment: 'text-green-500',
+      reply: 'text-blue-500',
+      mention: 'text-purple-500',
+      new_follower: 'text-pink-500',
+      award: 'text-yellow-500',
+      content_removed: 'text-red-500',
+      ban: 'text-red-600',
+      mod_invite: 'text-indigo-500',
+      message: 'text-blue-600',
+      comment: 'text-blue-500',
+      like: 'text-red-500',
+      follow: 'text-pink-500',
+      other: 'text-gray-500'
+    };
+    
+    return colorMap[type] || 'text-gray-500';
+  },
 
   getGroupedByType: async (filters = {}) => {
     try {
