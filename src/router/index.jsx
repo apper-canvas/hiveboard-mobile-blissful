@@ -1,5 +1,5 @@
-import { createBrowserRouter, Suspense } from "react-router-dom";
-import { lazy } from "react";
+import { createBrowserRouter } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Root from "@/layouts/Root.jsx";
 import Layout from "@/components/organisms/Layout.jsx";
 import { getRouteConfig } from "./route.utils.js";
