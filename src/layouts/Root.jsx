@@ -1,8 +1,8 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState, createContext, useContext } from "react";
-import { setUser, clearUser, setInitialized } from "@/store/userSlice";
-import { getApperClient } from "@/services/apperClient";
+import { useDispatch, useSelector } from "react-redux";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getApperClient } from "@/services/api/apperClientInit";
+import { clearUser, setInitialized, setUser } from "@/store/userSlice";
 
 export const AuthContext = createContext(null);
 
