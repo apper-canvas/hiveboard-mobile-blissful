@@ -1,4 +1,12 @@
 import commentsData from "@/services/mockData/comments.json";
+import React from "react";
+
+// Authentication check helper
+export const checkAuthentication = (user) => {
+  if (!user || !user.isAuthenticated) {
+    throw new Error("You need to login first to perform this operation");
+  }
+};
 
 let comments = [...commentsData];
 let savedComments = JSON.parse(localStorage.getItem('savedComments') || '[]');
@@ -28,17 +36,18 @@ export const commentService = {
     return { ...comment };
   },
 
-  async create(commentData) {
+async create(commentData, user) {
+    checkAuthentication(user);
     await delay(400);
     const parentComment = commentData.parentId ? 
       comments.find(c => c.Id === parseInt(commentData.parentId)) : null;
     
-const newComment = {
+    const newComment = {
       Id: Math.max(...comments.map(c => c.Id)) + 1,
       postId: commentData.postId.toString(),
       content: commentData.content,
       authorUsername: commentData.authorUsername,
-upvotes: 1,
+      upvotes: 1,
       downvotes: 0,
       likes: 0,
       isLiked: false,
@@ -58,13 +67,13 @@ upvotes: 1,
     return { ...newComment };
   },
 
-async vote(id, voteType) {
+async vote(id, voteType, user) {
+    checkAuthentication(user);
     await delay(200);
     const commentIndex = comments.findIndex(c => c.Id === parseInt(id));
     if (commentIndex === -1) {
       throw new Error("Comment not found");
     }
-    
     const comment = { ...comments[commentIndex] };
     const previousVote = comment.userVote;
     
@@ -91,13 +100,13 @@ async vote(id, voteType) {
     return { ...comment };
   },
 
-  async like(id) {
+async like(id, user) {
+    checkAuthentication(user);
     await delay(200);
     const commentIndex = comments.findIndex(c => c.Id === parseInt(id));
     if (commentIndex === -1) {
       throw new Error("Comment not found");
     }
-    
     const comment = { ...comments[commentIndex] };
     
     // Toggle like status
@@ -124,7 +133,7 @@ async vote(id, voteType) {
     return { ...comments[commentIndex] };
   },
 
-  async delete(id) {
+async delete(id) {
     await delay(300);
     const commentIndex = comments.findIndex(c => c.Id === parseInt(id));
     if (commentIndex === -1) {
@@ -133,10 +142,10 @@ async vote(id, voteType) {
     
     comments.splice(commentIndex, 1);
     return true;
-},
+  },
   
-  // Save/Unsave functionality for comments
-  async saveComment(commentId) {
+  async saveComment(commentId, user) {
+    checkAuthentication(user);
     await delay(200);
     if (!savedComments.includes(commentId)) {
       savedComments.push(commentId);
@@ -145,7 +154,8 @@ async vote(id, voteType) {
     return true;
   },
   
-  async unsaveComment(commentId) {
+  async unsaveComment(commentId, user) {
+    checkAuthentication(user);
     await delay(200);
     savedComments = savedComments.filter(id => id !== commentId);
     localStorage.setItem('savedComments', JSON.stringify(savedComments));

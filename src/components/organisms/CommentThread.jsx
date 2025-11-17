@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "@/layouts/Root";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { commentService } from "@/services/api/commentService";
 import { awardService } from "@/services/api/awardService";
@@ -36,8 +37,15 @@ const [showReplyForm, setShowReplyForm] = useState(false);
   const totalReplyCount = getTotalReplyCount(currentComment);
 
 const handleVote = async (voteType) => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
-      const updatedComment = await commentService.vote(currentComment.Id, voteType);
+      const updatedComment = await commentService.vote(currentComment.Id, voteType, user);
       setCurrentComment(updatedComment);
       onCommentVoted(currentComment.Id, updatedComment);
       
@@ -49,13 +57,19 @@ const handleVote = async (voteType) => {
         toast.success("Vote removed");
       }
     } catch (error) {
-      toast.error("Failed to vote. Please try again.");
+      toast.error(error.message || "Failed to vote. Please try again.");
     }
   };
-
-  const handleLike = async () => {
+const handleLike = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
-      const updatedComment = await commentService.like(currentComment.Id);
+      const updatedComment = await commentService.like(currentComment.Id, user);
       setCurrentComment(updatedComment);
       onCommentVoted(currentComment.Id, updatedComment);
       
@@ -65,23 +79,30 @@ const handleVote = async (voteType) => {
         toast.success("Like removed");
       }
     } catch (error) {
-      toast.error("Failed to like comment. Please try again.");
+      toast.error(error.message || "Failed to like comment. Please try again.");
     }
 };
   
-  const handleSave = async () => {
+const handleSave = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
       if (isSaved) {
-        await commentService.unsaveComment(comment.Id);
+        await commentService.unsaveComment(comment.Id, user);
         setIsSaved(false);
         toast.success("Comment removed from saved");
       } else {
-        await commentService.saveComment(comment.Id);
+        await commentService.saveComment(comment.Id, user);
         setIsSaved(true);
         toast.success("Comment saved successfully");
       }
     } catch (error) {
-      toast.error("Failed to update save status");
+      toast.error(error.message || "Failed to update save status");
     }
   };
 

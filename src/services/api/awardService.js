@@ -1,4 +1,11 @@
 import { deepClone } from "@/utils/deepClone";
+
+// Authentication check helper
+export const checkAuthentication = (user) => {
+  if (!user || !user.isAuthenticated) {
+    throw new Error("You need to login first to perform this operation");
+  }
+};
 import awards from "@/services/mockData/awards.json";
 
 let awardData = deepClone(awards);
@@ -37,8 +44,9 @@ export const awardService = {
     }));
   },
 
-  // Award a post
-  awardPost(postId, awardId, givenBy = 'current_user') {
+// Award a post
+  awardPost(postId, awardId, user, givenBy = 'current_user') {
+    checkAuthentication(user);
     if (!Number.isInteger(postId) || !Number.isInteger(awardId)) return null;
     
     const award = awardData.find(a => a.Id === awardId);
@@ -55,8 +63,9 @@ timestamp: Date.now()
     return deepClone(newAward);
   },
 
-  // Award a comment
-  awardComment(commentId, awardId, givenBy = 'current_user') {
+// Award a comment
+  awardComment(commentId, awardId, user, givenBy = 'current_user') {
+    checkAuthentication(user);
     if (!Number.isInteger(commentId) || !Number.isInteger(awardId)) return null;
     
     const award = awardData.find(a => a.Id === awardId);

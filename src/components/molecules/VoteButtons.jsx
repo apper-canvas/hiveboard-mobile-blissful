@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useAuth } from "@/layouts/Root";
+import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import { cn } from "@/utils/cn";
 
@@ -17,6 +19,13 @@ const VoteButtons = ({
   const [isLoading, setIsLoading] = useState(false);
 
 const handleVote = async (voteType) => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     if (isLoading || !onVote) return;
     
     setIsLoading(true);
@@ -29,7 +38,14 @@ const handleVote = async (voteType) => {
     }
   };
 
-  const handleLike = async () => {
+const handleLike = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     if (isLoading || !onLike) return;
     
     setIsLoading(true);

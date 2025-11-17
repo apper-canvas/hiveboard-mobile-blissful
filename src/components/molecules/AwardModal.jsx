@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/layouts/Root';
 import { awardService } from '@/services/api/awardService';
 import { toast } from 'react-toastify';
 import ApperIcon from '@/components/ApperIcon';
@@ -18,12 +19,18 @@ const AwardModal = ({ isOpen, onClose, onAwardGiven, contentType = 'post', conte
     }
   }, [isOpen]);
 
-  const handleGiveAward = async () => {
+const handleGiveAward = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     if (!selectedAward || contentId === null) {
       toast.error('Please select an award');
       return;
     }
-
     setIsLoading(true);
 
     // Simulate coin deduction and award process

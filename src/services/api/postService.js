@@ -1,4 +1,12 @@
 import postsData from "@/services/mockData/posts.json";
+import React from "react";
+
+// Authentication check helper
+export const checkAuthentication = (user) => {
+  if (!user || !user.isAuthenticated) {
+    throw new Error("You need to login first to perform this operation");
+  }
+};
 
 let posts = [...postsData];
 let savedPosts = JSON.parse(localStorage.getItem('savedPosts') || '[]');
@@ -151,20 +159,7 @@ async create(postData) {
       isNSFW: postData.isNSFW || false,
       isSpoiler: postData.isSpoiler || false,
       isOC: postData.isOC || false,
-upvotes: 1,
-      downvotes: 0,
-      likes: 0,
-      isLiked: false,
-      commentCount: 0,
-      timestamp: Date.now(),
-      userVote: "up",
-      pollDuration: postData.pollDuration || null,
-      pollOptions: postData.pollOptions || null,
-      pollEndTime: postData.pollDuration ? Date.now() + (postData.pollDuration * 24 * 60 * 60 * 1000) : null,
-      pollActive: postData.pollDuration ? true : false,
-      awards: []
-    };
-    
+      upvotes: 1,
     posts.unshift(newPost);
     if (newPost.contentType === 'poll') {
       pollVotes[newPost.Id] = { voters: [], votes: {} };
@@ -173,7 +168,8 @@ upvotes: 1,
     return { ...newPost };
   },
 
-async vote(id, voteType) {
+async vote(id, voteType, user) {
+    checkAuthentication(user);
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {
@@ -206,7 +202,8 @@ async vote(id, voteType) {
     return { ...post };
   },
 
-  async votePoll(id, optionIndex) {
+async votePoll(id, optionIndex, user) {
+    checkAuthentication(user);
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {
@@ -274,7 +271,8 @@ async vote(id, voteType) {
     return { ...post };
   },
 
-  async like(id) {
+async like(id, user) {
+    checkAuthentication(user);
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {
@@ -318,8 +316,9 @@ async update(id, data) {
     return true;
 },
   
-  // Save/Unsave functionality
-  async savePost(postId) {
+// Save/Unsave functionality
+  async savePost(postId, user) {
+    checkAuthentication(user);
     await delay(200);
     if (!savedPosts.includes(postId)) {
       savedPosts.push(postId);
@@ -327,8 +326,8 @@ async update(id, data) {
     }
     return true;
   },
-  
-  async unsavePost(postId) {
+async unsavePost(postId, user) {
+    checkAuthentication(user);
     await delay(200);
     savedPosts = savedPosts.filter(id => id !== postId);
     localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
@@ -336,7 +335,8 @@ async update(id, data) {
   },
   
   // Hide/Unhide functionality
-  async hidePost(postId) {
+  async hidePost(postId, user) {
+    checkAuthentication(user);
     await delay(200);
     if (!hiddenPosts.includes(postId)) {
       hiddenPosts.push(postId);
@@ -351,8 +351,7 @@ async update(id, data) {
     localStorage.setItem('hiddenPosts', JSON.stringify(hiddenPosts));
     return true;
   },
-  
-  // Get saved posts
+// Get saved posts
   async getSavedPosts() {
     await delay(300);
     const savedPostIds = JSON.parse(localStorage.getItem('savedPosts') || '[]');

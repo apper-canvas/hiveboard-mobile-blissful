@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/layouts/Root";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
@@ -45,8 +46,15 @@ useEffect(() => {
   }, [currentPost.Id, currentPost.contentType, currentPost.pollActive]);
 
   const handleVote = async (voteType) => {
+const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
-      const updatedPost = await postService.vote(currentPost.Id, voteType);
+      const updatedPost = await postService.vote(currentPost.Id, voteType, user);
       setCurrentPost(updatedPost);
       
       if (voteType === "up" && updatedPost.userVote === "up") {
@@ -57,18 +65,25 @@ useEffect(() => {
         toast.success("Vote removed");
       }
     } catch (error) {
-      toast.error("Failed to vote. Please try again.");
+      toast.error(error.message || "Failed to vote. Please try again.");
     }
   };
 
-  const handlePollVote = async (optionIndex) => {
+const handlePollVote = async (optionIndex) => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     if (userVoted) {
       toast.error("You've already voted in this poll");
       return;
     }
     
     try {
-      const updatedPost = await postService.votePoll(currentPost.Id, optionIndex);
+      const updatedPost = await postService.votePoll(currentPost.Id, optionIndex, user);
       setCurrentPost(updatedPost);
       setUserVoted(true);
       setShowResults(true);
@@ -89,8 +104,15 @@ useEffect(() => {
   };
 
 const handleLike = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
-      const updatedPost = await postService.like(currentPost.Id);
+      const updatedPost = await postService.like(currentPost.Id, user);
       setCurrentPost(updatedPost);
       
       if (updatedPost.isLiked) {
@@ -99,39 +121,52 @@ const handleLike = async () => {
         toast.success("Like removed");
       }
     } catch (error) {
-      toast.error("Failed to like post. Please try again.");
+      toast.error(error.message || "Failed to like post. Please try again.");
     }
   };
 
-  const handleSave = async () => {
+const handleSave = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
       if (isSaved) {
-        await postService.unsavePost(currentPost.Id);
+        await postService.unsavePost(currentPost.Id, user);
         setIsSaved(false);
         toast.success("Post removed from saved");
       } else {
-        await postService.savePost(currentPost.Id);
+        await postService.savePost(currentPost.Id, user);
         setIsSaved(true);
         toast.success("Post saved successfully");
       }
     } catch (error) {
-      toast.error("Failed to update save status");
+      toast.error(error.message || "Failed to update save status");
     }
   };
 
-  const handleHide = async () => {
+const handleHide = async () => {
+    const { user } = useAuth();
+    
+    if (!user?.isAuthenticated) {
+      toast.error("You need to login first to perform this operation");
+      return;
+    }
+    
     try {
-      await postService.hidePost(currentPost.Id);
+      await postService.hidePost(currentPost.Id, user);
       setIsHidden(true);
       toast.success("Post hidden from feed");
       if (onPostUpdate) {
         onPostUpdate();
       }
     } catch (error) {
-      toast.error("Failed to hide post");
+      toast.error(error.message || "Failed to hide post");
     }
   };
-
   const handlePostClick = (e) => {
     if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
       return;
