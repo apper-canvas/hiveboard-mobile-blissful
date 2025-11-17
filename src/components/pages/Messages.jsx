@@ -347,12 +347,13 @@ const buildMessageThreads = (messages) => {
 
           {/* Conversations List */}
           <div className="flex-1 overflow-y-auto">
-            {filteredConversations.length === 0 ? (
+{filteredConversations.length === 0 ? (
               <div className="p-8 text-center">
                 <ApperIcon name="MessageSquare" className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 font-medium">No conversations yet</p>
                 <p className="text-sm text-gray-400 mt-1">Start messaging to see conversations here</p>
-) : (
+              </div>
+            ) : (
               <div className="space-y-1">
                 {filteredConversations.map((conversation) => {
                   const otherParticipant = conversation.participants?.find(p => p.username !== 'john_doe') || null;
@@ -406,37 +407,32 @@ const buildMessageThreads = (messages) => {
                   );
                 })}
               </div>
-              </div>
             )}
           </div>
         </div>
 
         {/* Messages Area */}
         <div className="flex-1 flex flex-col">
-          {!selectedConversation ? (
+{!selectedConversation ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <ApperIcon name="MessageSquare" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
               </div>
             </div>
-) : (
+          ) : (
             <>
               {/* Messages Header */}
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-<div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
-                      {selectedConversation.participants?.find(p => p.username !== 'john_doe')?.username?.charAt(0).toUpperCase() || '?'}
-                    </div>
-                    <div>
-                      <h2 className="font-semibold text-gray-900">
-                        {selectedConversation.participants?.find(p => p.username !== 'john_doe')?.username || 'Unknown User'}
-                      </h2>
-                      <h2 className="font-medium text-gray-900">
-                        {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
-                      </h2>
-                      <p className="text-sm text-gray-500">Active now</p>
-                    </div>
+                  <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
+                    {selectedConversation.participants?.find(p => p.username !== 'john_doe')?.username?.charAt(0).toUpperCase() || '?'}
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-gray-900">
+                      {selectedConversation.participants?.find(p => p.username !== 'john_doe')?.username || 'Unknown User'}
+                    </h2>
+                    <p className="text-sm text-gray-500">Active now</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -445,7 +441,7 @@ const buildMessageThreads = (messages) => {
                     >
                       <ApperIcon name="Mail" size={18} />
                     </Button>
-                    <div className="relative">
+<div className="relative">
                       <Button
                         variant="ghost"
                         onClick={() => setShowActionMenu(showActionMenu ? null : selectedConversation.Id)}
@@ -453,7 +449,7 @@ const buildMessageThreads = (messages) => {
                       >
                         <ApperIcon name="MoreVertical" size={18} />
                       </Button>
-{showActionMenu === selectedConversation.Id && (
+                      {showActionMenu === selectedConversation.Id && (
                         <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg py-2 w-48 z-50">
                           <button
                             onClick={() => handleMarkAsUnread(selectedConversation.Id)}
@@ -494,10 +490,10 @@ const buildMessageThreads = (messages) => {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {messages.map((thread) => (
+{messages.map((thread) => (
                       <div key={thread.Id} className="space-y-3">
                         {/* Main Message */}
-<div className={cn(
+                        <div className={cn(
                           "flex gap-3 max-w-[85%] group",
                           thread.senderId === 1 ? "ml-auto flex-row-reverse" : ""
                         )}>
@@ -564,7 +560,7 @@ const buildMessageThreads = (messages) => {
                                     className="flex-1"
                                   />
                                   <Button
-onClick={() => handleSendReply(thread.Id)}
+                                    onClick={() => handleSendReply(thread.Id)}
                                     disabled={!replyMessage.trim() || sending}
                                     variant="primary"
                                     size="sm"
@@ -623,7 +619,7 @@ onClick={() => handleSendReply(thread.Id)}
                                       <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                                     )}
                                   </div>
-</div>
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -662,10 +658,11 @@ onClick={() => handleSendReply(thread.Id)}
                       </>
                     ) : (
                       <ApperIcon name="Send" className="w-4 h-4" />
-                    )}
+)}
                   </Button>
                 </div>
-<strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
+                <div className="text-xs text-gray-500 mt-2">
+                  <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
                 </div>
               </form>
             </>
