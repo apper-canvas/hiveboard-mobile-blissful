@@ -1,266 +1,785 @@
-import notificationsData from "@/services/mockData/notifications.json";
-
-let notifications = [...notificationsData];
+import { getApperClient } from "@/services/api/apperClientInit";
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const notificationService = {
-  async getAll() {
-    await delay(300);
-    return [...notifications].sort((a, b) => b.timestamp - a.timestamp);
-  },
+  getUnreadCount: async () => {
+    try {
+      const apperClient = getApperClient();
+      const response = await apperClient.fetchRecords('notifications_c', {
+        fields: [
+          { field: { Name: 'Id' } },
+          { field: { Name: 'isRead_c' } }
+        ],
+        where: [
+          {
+            FieldName: 'isRead_c',
+            Operator: 'EqualTo',
+            Values: [false],
+            Include: true
+          }
+        ]
+      });
 
-  async getUnreadCount() {
-    await delay(100);
-    return notifications.filter(n => !n.isRead).length;
-  },
+      if (!response?.success) {
+        console.error('Error fetching unread count:', response?.message);
+        return 0;
+      }
 
-  async getByType(type) {
-    await delay(200);
-    return notifications.filter(n => n.type === type).sort((a, b) => b.timestamp - a.timestamp);
-  },
-
-  async getUnread() {
-    await delay(200);
-    return notifications.filter(n => !n.isRead).sort((a, b) => b.timestamp - a.timestamp);
-  },
-
-  async markAsRead(id) {
-    await delay(150);
-    const notificationIndex = notifications.findIndex(n => n.Id === id);
-    if (notificationIndex === -1) {
-      throw new Error("Notification not found");
+      return response.data?.length || 0;
+    } catch (error) {
+      console.error('Error in getUnreadCount:', error?.message || error);
+      return 0;
     }
-    
-    notifications[notificationIndex] = { 
-      ...notifications[notificationIndex], 
-      isRead: true 
-    };
-    return { ...notifications[notificationIndex] };
   },
 
-  async markAsUnread(id) {
-    await delay(150);
-    const notificationIndex = notifications.findIndex(n => n.Id === id);
-    if (notificationIndex === -1) {
-      throw new Error("Notification not found");
-    }
-    
-    notifications[notificationIndex] = { 
-      ...notifications[notificationIndex], 
-      isRead: false 
-    };
-    return { ...notifications[notificationIndex] };
-  },
-
-  async markAllAsRead() {
-    await delay(200);
-    notifications = notifications.map(n => ({ ...n, isRead: true }));
-    return true;
-  },
-
-  async delete(id) {
-    await delay(150);
-    const notificationIndex = notifications.findIndex(n => n.Id === id);
-    if (notificationIndex === -1) {
-      throw new Error("Notification not found");
-    }
-    
-    notifications.splice(notificationIndex, 1);
-    return true;
-  },
-
-  async clearAll() {
-    await delay(200);
-    notifications = [];
-    return true;
-  },
-
-  async create(notificationData) {
-    await delay(200);
-    const newNotification = {
-      Id: Math.max(...notifications.map(n => n.Id)) + 1,
-      ...notificationData,
-      isRead: false,
-      timestamp: Date.now()
-    };
-    
-    notifications.unshift(newNotification);
-    
-    // Trigger email notification for important events
-    await this.triggerEmailNotification(newNotification);
-    
-    return { ...newNotification };
-  },
-
-  // Group notifications by type and similar content
-  groupNotifications(notificationList) {
-    const groups = new Map();
-    
-    notificationList.forEach(notification => {
-      const groupKey = this.getGroupKey(notification);
+  getAll: async (filters = {}) => {
+    try {
+      const apperClient = getApperClient();
       
-      if (!groups.has(groupKey)) {
-        groups.set(groupKey, {
-          key: groupKey,
-          type: notification.type,
-          title: this.getGroupTitle(notification),
-          notifications: [],
-          count: 0,
-          latestTimestamp: notification.timestamp
+      const whereConditions = [];
+      
+      if (filters.type) {
+        whereConditions.push({
+          FieldName: 'type_c',
+          Operator: 'EqualTo',
+          Values: [filters.type]
         });
       }
-      
-      const group = groups.get(groupKey);
-      group.notifications.push(notification);
-      group.count++;
-      
-      if (notification.timestamp > group.latestTimestamp) {
-        group.latestTimestamp = notification.timestamp;
-      }
-    });
-    
-    return Array.from(groups.values()).sort((a, b) => b.latestTimestamp - a.latestTimestamp);
-  },
 
-  getGroupKey(notification) {
-    // Group by type and target
-    switch (notification.type) {
-      case 'upvote_post':
-      case 'upvote_comment':
-        return `${notification.type}_${notification.targetId}`;
-      case 'reply':
-        return `reply_${notification.targetId}`;
-      case 'mention':
-        return `mention_${notification.targetId}`;
-      case 'new_follower':
-        return 'new_followers';
-      case 'award':
-        return `award_${notification.targetId}`;
-      default:
-        return `${notification.type}_${notification.Id}`;
-    }
-  },
-
-  getGroupTitle(notification) {
-    switch (notification.type) {
-      case 'upvote_post':
-        return 'Post Upvotes';
-      case 'upvote_comment':
-        return 'Comment Upvotes';
-      case 'reply':
-        return 'Replies';
-      case 'mention':
-        return 'Mentions';
-      case 'new_follower':
-        return 'New Followers';
-      case 'award':
-        return 'Awards';
-      case 'content_removed':
-        return 'Content Moderation';
-      case 'ban':
-        return 'Account Actions';
-      case 'mod_invite':
-        return 'Moderation Invites';
-      case 'message':
-        return 'Messages';
-      default:
-        return 'Notifications';
-    }
-  },
-
-  // Trigger email notifications for important events
-  async triggerEmailNotification(notification) {
-    try {
-      // Check if this notification type should trigger email
-      const emailTypes = ['reply', 'mention', 'award', 'mod_invite', 'ban', 'content_removed'];
-      
-      if (!emailTypes.includes(notification.type)) {
-        return;
+      if (filters.isRead !== undefined) {
+        whereConditions.push({
+          FieldName: 'isRead_c',
+          Operator: 'EqualTo',
+          Values: [filters.isRead]
+        });
       }
 
-      // Get user preferences (in real app, this would be based on user ID)
-      const preferences = await this.getPreferences();
-      
-      if (!preferences.delivery.email) {
-        return;
+      const response = await apperClient.fetchRecords('notifications_c', {
+        fields: [
+          { field: { Name: 'Id' } },
+          { field: { Name: 'title_c' } },
+          { field: { Name: 'message_c' } },
+          { field: { Name: 'type_c' } },
+          { field: { Name: 'isRead_c' } },
+          { field: { Name: 'createdAt_c' } },
+          { field: { Name: 'link_c' } }
+        ],
+        where: whereConditions,
+        orderBy: [{ fieldName: 'createdAt_c', sorttype: 'DESC' }],
+        pagingInfo: {
+          limit: filters.limit || 20,
+          offset: filters.offset || 0
+        }
+      });
+
+      if (!response?.success) {
+        console.error('Error fetching notifications:', response?.message);
+        return { data: [], total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
       }
 
-      // Check if this specific notification type is enabled for email
-      if (!preferences.types[notification.type]) {
-        return;
-      }
-
-      // Prepare email data
-      const emailData = {
-        type: notification.type,
-        title: notification.title,
-        message: notification.message,
-        targetType: notification.targetType,
-        targetId: notification.targetId,
-        timestamp: notification.timestamp,
-        metadata: notification.metadata
+      return {
+        data: response.data || [],
+        total: response.total || 0,
+        pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 }
       };
-
-      // Note: In production, this would make an API call to send email
-      console.info(`Email notification triggered for: ${notification.type}`);
-      
     } catch (error) {
-      console.error('Failed to trigger email notification:', error);
-      // Don't throw error as this shouldn't block notification creation
+      console.error('Error in getAll:', error?.message || error);
+      return { data: [], total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
     }
   },
 
-  // Utility method to get notification icon based on type
-  getNotificationIcon(type) {
-    const iconMap = {
-      upvote_post: 'ArrowUp',
-      upvote_comment: 'ArrowUp',
-      reply: 'MessageCircle',
-      mention: 'AtSign',
-      new_follower: 'UserPlus',
-      award: 'Award',
-      content_removed: 'Trash2',
-      ban: 'Shield',
-      mod_invite: 'Crown',
-      message: 'Mail'
-    };
-    return iconMap[type] || 'Bell';
+  getById: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.getRecordById('notifications_c', id, {
+        fields: [
+          { field: { Name: 'Id' } },
+          { field: { Name: 'title_c' } },
+          { field: { Name: 'message_c' } },
+          { field: { Name: 'type_c' } },
+          { field: { Name: 'isRead_c' } },
+          { field: { Name: 'createdAt_c' } },
+          { field: { Name: 'link_c' } }
+        ]
+      });
+
+      if (!response?.success) {
+        console.error('Error fetching notification:', response?.message);
+        return null;
+      }
+
+      return response.data || null;
+    } catch (error) {
+      console.error('Error in getById:', error?.message || error);
+      return null;
+    }
   },
 
-  // Utility method to get notification color based on type
-  getNotificationColor(type) {
-    const colorMap = {
-      upvote_post: 'text-green-600',
-      upvote_comment: 'text-green-600',
-      reply: 'text-blue-600',
-      mention: 'text-purple-600',
-      new_follower: 'text-indigo-600',
-      award: 'text-yellow-600',
-      content_removed: 'text-red-600',
-      ban: 'text-red-600',
-      mod_invite: 'text-green-600',
-      message: 'text-gray-600'
-    };
-    return colorMap[type] || 'text-gray-600';
+  markAsRead: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.updateRecord('notifications_c', {
+        records: [{ Id: id, isRead_c: true }]
+      });
+
+      if (!response?.success) {
+        console.error('Error marking notification as read:', response?.message);
+        return null;
+      }
+
+      return response.results?.[0]?.data || null;
+    } catch (error) {
+      console.error('Error in markAsRead:', error?.message || error);
+      return null;
+    }
   },
 
-  // Get formatted notification type name
-  getTypeDisplayName(type) {
+  markAsUnread: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.updateRecord('notifications_c', {
+        records: [{ Id: id, isRead_c: false }]
+      });
+
+      if (!response?.success) {
+        console.error('Error marking notification as unread:', response?.message);
+        return null;
+      }
+
+      return response.results?.[0]?.data || null;
+    } catch (error) {
+      console.error('Error in markAsUnread:', error?.message || error);
+      return null;
+    }
+  },
+
+  markAllAsRead: async () => {
+    try {
+      const apperClient = getApperClient();
+      
+      const fetchResponse = await apperClient.fetchRecords('notifications_c', {
+        fields: [{ field: { Name: 'Id' } }],
+        where: [
+          {
+            FieldName: 'isRead_c',
+            Operator: 'EqualTo',
+            Values: [false]
+          }
+        ]
+      });
+
+      if (!fetchResponse?.success) {
+        console.error('Error fetching unread notifications:', fetchResponse?.message);
+        return [];
+      }
+
+      const unreadIds = fetchResponse.data?.map(n => n.Id) || [];
+      
+      if (unreadIds.length === 0) {
+        return [];
+      }
+
+      const updateResponse = await apperClient.updateRecord('notifications_c', {
+        records: unreadIds.map(id => ({ Id: id, isRead_c: true }))
+      });
+
+      if (!updateResponse?.success) {
+        console.error('Error marking all as read:', updateResponse?.message);
+        return [];
+      }
+
+      return updateResponse.results?.map(r => r.data) || [];
+    } catch (error) {
+      console.error('Error in markAllAsRead:', error?.message || error);
+      return [];
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.deleteRecord('notifications_c', {
+        RecordIds: [id]
+      });
+
+      if (!response?.success) {
+        console.error('Error deleting notification:', response?.message);
+        return { success: false };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error in delete:', error?.message || error);
+      return { success: false };
+    }
+  },
+
+  clearAll: async () => {
+    try {
+      const apperClient = getApperClient();
+      
+      const fetchResponse = await apperClient.fetchRecords('notifications_c', {
+        fields: [{ field: { Name: 'Id' } }]
+      });
+
+      if (!fetchResponse?.success) {
+        console.error('Error fetching notifications for clear:', fetchResponse?.message);
+        return { success: false };
+      }
+
+      const allIds = fetchResponse.data?.map(n => n.Id) || [];
+      
+      if (allIds.length === 0) {
+        return { success: true };
+      }
+
+      const deleteResponse = await apperClient.deleteRecord('notifications_c', {
+        RecordIds: allIds
+      });
+
+      if (!deleteResponse?.success) {
+        console.error('Error clearing all notifications:', deleteResponse?.message);
+        return { success: false };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error in clearAll:', error?.message || error);
+      return { success: false };
+    }
+  },
+
+  getGroupedByType: async (filters = {}) => {
+    try {
+      const result = await notificationService.getAll(filters);
+      const grouped = {};
+
+      result.data?.forEach(notification => {
+        const type = notification.type_c || 'other';
+        if (!grouped[type]) {
+          grouped[type] = [];
+        }
+        grouped[type].push(notification);
+      });
+
+      return { ...result, data: grouped };
+    } catch (error) {
+      console.error('Error in getGroupedByType:', error?.message || error);
+      return { data: {}, total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
+    }
+  },
+
+  getDisplayName: (type) => {
     const displayMap = {
-      upvote_post: 'Post Upvote',
-      upvote_comment: 'Comment Upvote',
-      reply: 'Reply',
-      mention: 'Mention',
-      new_follower: 'New Follower',
-      award: 'Award',
-      content_removed: 'Content Removed',
-      ban: 'Ban',
-      mod_invite: 'Mod Invite',
-      message: 'Message'
+      like: 'Likes',
+      comment: 'Comments',
+      award: 'Awards',
+      mention: 'Mentions',
+      follow: 'Follows',
+      message: 'Messages',
     };
-return displayMap[type] || 'Notification';
+
+    return displayMap[type] || 'Notification';
   },
+
+  getPreferences: async () => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return {
+        types: {
+          upvote_post: true,
+          upvote_comment: true,
+          reply: true,
+          mention: true,
+          new_follower: true,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        },
+        delivery: {
+          email: true,
+          push: true,
+          emailImportantOnly: false,
+          emailDigest: false
+        },
+        frequency: 'instant',
+        emailTypes: {
+          upvote_post: false,
+          upvote_comment: false,
+          reply: true,
+          mention: true,
+          new_follower: false,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        }
+      };
+    } catch (error) {
+      throw new Error('Failed to load notification preferences');
+    }
+  },
+
+  updatePreferences: async (preferences) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      if (!preferences.types || !preferences.delivery || !preferences.frequency) {
+        throw new Error('Invalid preferences structure');
+      }
+      
+      return preferences;
+    } catch (error) {
+      throw new Error('Failed to update notification preferences');
+    }
+  },
+
+  resetPreferences: async () => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      return {
+        types: {
+          upvote_post: true,
+          upvote_comment: true,
+          reply: true,
+          mention: true,
+          new_follower: true,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        },
+        delivery: {
+          email: true,
+          push: true,
+          emailImportantOnly: false,
+          emailDigest: false
+        },
+        frequency: 'instant',
+        emailTypes: {
+          upvote_post: false,
+          upvote_comment: false,
+          reply: true,
+          mention: true,
+          new_follower: false,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        }
+      };
+    } catch (error) {
+      throw new Error('Failed to reset notification preferences');
+    }
+  }
+};
+
+export default notificationService;
+import { getApperClient } from "@/services/api/apperClientInit";
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const notificationService = {
+  getUnreadCount: async () => {
+    try {
+      const apperClient = getApperClient();
+      const response = await apperClient.fetchRecords('notifications_c', {
+        fields: [
+          { field: { Name: 'Id' } },
+          { field: { Name: 'isRead_c' } }
+        ],
+        where: [
+          {
+            FieldName: 'isRead_c',
+            Operator: 'EqualTo',
+            Values: [false],
+            Include: true
+          }
+        ]
+      });
+
+      if (!response?.success) {
+        console.error('Error fetching unread count:', response?.message);
+        return 0;
+      }
+
+      return response.data?.length || 0;
+    } catch (error) {
+      console.error('Error in getUnreadCount:', error?.message || error);
+      return 0;
+    }
+  },
+
+  getAll: async (filters = {}) => {
+    try {
+      const apperClient = getApperClient();
+      
+      // Build where conditions
+      const whereConditions = [];
+      
+      if (filters.type) {
+        whereConditions.push({
+          FieldName: 'type_c',
+          Operator: 'EqualTo',
+          Values: [filters.type]
+        });
+      }
+
+      if (filters.isRead !== undefined) {
+        whereConditions.push({
+          FieldName: 'isRead_c',
+          Operator: 'EqualTo',
+          Values: [filters.isRead]
+        });
+      }
+
+      const response = await apperClient.fetchRecords('notifications_c', {
+        fields: [
+          { field: { Name: 'Id' } },
+          { field: { Name: 'title_c' } },
+          { field: { Name: 'message_c' } },
+          { field: { Name: 'type_c' } },
+          { field: { Name: 'isRead_c' } },
+          { field: { Name: 'createdAt_c' } },
+          { field: { Name: 'link_c' } }
+        ],
+        where: whereConditions,
+        orderBy: [{ fieldName: 'createdAt_c', sorttype: 'DESC' }],
+        pagingInfo: {
+          limit: filters.limit || 20,
+          offset: filters.offset || 0
+        }
+      });
+
+      if (!response?.success) {
+        console.error('Error fetching notifications:', response?.message);
+        return { data: [], total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
+      }
+
+      return {
+        data: response.data || [],
+        total: response.total || 0,
+        pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 }
+      };
+    } catch (error) {
+      console.error('Error in getAll:', error?.message || error);
+      return { data: [], total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
+    }
+  },
+
+  getById: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.getRecordById('notifications_c', id, {
+        fields: [
+          { field: { Name: 'Id' } },
+          { field: { Name: 'title_c' } },
+          { field: { Name: 'message_c' } },
+          { field: { Name: 'type_c' } },
+          { field: { Name: 'isRead_c' } },
+          { field: { Name: 'createdAt_c' } },
+          { field: { Name: 'link_c' } }
+        ]
+      });
+
+      if (!response?.success) {
+        console.error('Error fetching notification:', response?.message);
+        return null;
+      }
+
+      return response.data || null;
+    } catch (error) {
+      console.error('Error in getById:', error?.message || error);
+      return null;
+    }
+  },
+
+  markAsRead: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.updateRecord('notifications_c', {
+        records: [{ Id: id, isRead_c: true }]
+      });
+
+      if (!response?.success) {
+        console.error('Error marking notification as read:', response?.message);
+        return null;
+      }
+
+      return response.results?.[0]?.data || null;
+    } catch (error) {
+      console.error('Error in markAsRead:', error?.message || error);
+      return null;
+    }
+  },
+
+  markAsUnread: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.updateRecord('notifications_c', {
+        records: [{ Id: id, isRead_c: false }]
+      });
+
+      if (!response?.success) {
+        console.error('Error marking notification as unread:', response?.message);
+        return null;
+      }
+
+      return response.results?.[0]?.data || null;
+    } catch (error) {
+      console.error('Error in markAsUnread:', error?.message || error);
+      return null;
+    }
+  },
+
+  markAllAsRead: async () => {
+    try {
+      const apperClient = getApperClient();
+      
+      // First, fetch all unread notifications
+      const fetchResponse = await apperClient.fetchRecords('notifications_c', {
+        fields: [{ field: { Name: 'Id' } }],
+        where: [
+          {
+            FieldName: 'isRead_c',
+            Operator: 'EqualTo',
+            Values: [false]
+          }
+        ]
+      });
+
+      if (!fetchResponse?.success) {
+        console.error('Error fetching unread notifications:', fetchResponse?.message);
+        return [];
+      }
+
+      const unreadIds = fetchResponse.data?.map(n => n.Id) || [];
+      
+      if (unreadIds.length === 0) {
+        return [];
+      }
+
+      // Update all unread notifications
+      const updateResponse = await apperClient.updateRecord('notifications_c', {
+        records: unreadIds.map(id => ({ Id: id, isRead_c: true }))
+      });
+
+      if (!updateResponse?.success) {
+        console.error('Error marking all as read:', updateResponse?.message);
+        return [];
+      }
+
+      return updateResponse.results?.map(r => r.data) || [];
+    } catch (error) {
+      console.error('Error in markAllAsRead:', error?.message || error);
+      return [];
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const apperClient = getApperClient();
+      
+      const response = await apperClient.deleteRecord('notifications_c', {
+        RecordIds: [id]
+      });
+
+      if (!response?.success) {
+        console.error('Error deleting notification:', response?.message);
+        return { success: false };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error in delete:', error?.message || error);
+      return { success: false };
+    }
+  },
+
+  clearAll: async () => {
+    try {
+      const apperClient = getApperClient();
+      
+      // Fetch all notifications
+      const fetchResponse = await apperClient.fetchRecords('notifications_c', {
+        fields: [{ field: { Name: 'Id' } }]
+      });
+
+      if (!fetchResponse?.success) {
+        console.error('Error fetching notifications for clear:', fetchResponse?.message);
+        return { success: false };
+      }
+
+      const allIds = fetchResponse.data?.map(n => n.Id) || [];
+      
+      if (allIds.length === 0) {
+        return { success: true };
+      }
+
+      // Delete all notifications
+      const deleteResponse = await apperClient.deleteRecord('notifications_c', {
+        RecordIds: allIds
+      });
+
+      if (!deleteResponse?.success) {
+        console.error('Error clearing all notifications:', deleteResponse?.message);
+        return { success: false };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error in clearAll:', error?.message || error);
+      return { success: false };
+    }
+  },
+
+  getGroupedByType: async (filters = {}) => {
+    try {
+      const result = await notificationService.getAll(filters);
+      const grouped = {};
+
+      result.data?.forEach(notification => {
+        const type = notification.type_c || 'other';
+        if (!grouped[type]) {
+          grouped[type] = [];
+        }
+        grouped[type].push(notification);
+      });
+
+      return { ...result, data: grouped };
+    } catch (error) {
+      console.error('Error in getGroupedByType:', error?.message || error);
+      return { data: {}, total: 0, pageInfo: { limit: filters.limit || 20, offset: filters.offset || 0 } };
+    }
+  },
+getDisplayName: (type) => {
+    const displayMap = {
+      like: 'Likes',
+      comment: 'Comments',
+      award: 'Awards',
+      mention: 'Mentions',
+      follow: 'Follows',
+      message: 'Messages',
+    };
+
+    return displayMap[type] || 'Notification';
+  },
+
+  getPreferences: async () => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      return {
+        types: {
+          upvote_post: true,
+          upvote_comment: true,
+          reply: true,
+          mention: true,
+          new_follower: true,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        },
+        delivery: {
+          email: true,
+          push: true,
+          emailImportantOnly: false,
+          emailDigest: false
+        },
+        frequency: 'instant',
+        emailTypes: {
+          upvote_post: false,
+          upvote_comment: false,
+          reply: true,
+          mention: true,
+          new_follower: false,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        }
+      };
+    } catch (error) {
+      throw new Error('Failed to load notification preferences');
+    }
+  },
+
+  updatePreferences: async (preferences) => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      if (!preferences.types || !preferences.delivery || !preferences.frequency) {
+        throw new Error('Invalid preferences structure');
+      }
+      
+      return preferences;
+    } catch (error) {
+      throw new Error('Failed to update notification preferences');
+    }
+  },
+
+  resetPreferences: async () => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      return {
+        types: {
+          upvote_post: true,
+          upvote_comment: true,
+          reply: true,
+          mention: true,
+          new_follower: true,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        },
+        delivery: {
+          email: true,
+          push: true,
+          emailImportantOnly: false,
+          emailDigest: false
+        },
+        frequency: 'instant',
+        emailTypes: {
+          upvote_post: false,
+          upvote_comment: false,
+          reply: true,
+          mention: true,
+          new_follower: false,
+          award: true,
+          content_removed: true,
+          ban: true,
+          mod_invite: true,
+          message: true
+        }
+      };
+    } catch (error) {
+      throw new Error('Failed to reset notification preferences');
+    }
+  }
+};
+
+export default notificationService;
 
 // Notification preferences management
   getPreferences: async () => {
