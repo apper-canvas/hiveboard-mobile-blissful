@@ -1,27 +1,18 @@
+import { deepClone } from "@/utils/deepClone";
 import awards from "@/services/mockData/awards.json";
-import postAwards from "@/services/mockData/postAwards.json";
-import commentAwards from "@/services/mockData/commentAwards.json";
-
-// Polyfill for structuredClone if not available
-const deepClone = (obj) => {
-  if (typeof structuredClone !== 'undefined') {
-    return structuredClone(obj);
-  }
-  return JSON.parse(JSON.stringify(obj));
-};
 
 let awardData = deepClone(awards);
-let postAwardData = deepClone(postAwards);
-let commentAwardData = deepClone(commentAwards);
+let postAwardData = [];
+let commentAwardData = [];
 
 export const awardService = {
-  // Get all award types
-getAllAwards() {
+// Get all award types
+  getAllAwards() {
     return deepClone(awardData);
   },
 
-  // Get specific award
-getAward(id) {
+// Get specific award
+  getAward(id) {
     if (!Number.isInteger(id)) return null;
     return deepClone(awardData.find(award => award.Id === id)) || null;
   },
@@ -58,9 +49,9 @@ getAward(id) {
       postId,
       awardId,
       givenBy,
-      timestamp: Date.now()
+timestamp: Date.now()
     };
-postAwardData.push(newAward);
+    postAwardData.push(newAward);
     return deepClone(newAward);
   },
 
@@ -76,9 +67,9 @@ postAwardData.push(newAward);
       commentId,
       awardId,
       givenBy,
-      timestamp: Date.now()
+timestamp: Date.now()
     };
-commentAwardData.push(newAward);
+    commentAwardData.push(newAward);
     return deepClone(newAward);
   },
 
