@@ -352,60 +352,60 @@ const buildMessageThreads = (messages) => {
                 <ApperIcon name="MessageSquare" className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 font-medium">No conversations yet</p>
                 <p className="text-sm text-gray-400 mt-1">Start messaging to see conversations here</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100">
+) : (
+              <div className="space-y-1">
                 {filteredConversations.map((conversation) => {
-                  const otherParticipant = conversation.participants.find(p => p.username !== 'john_doe');
+                  const otherParticipant = conversation.participants?.find(p => p.username !== 'john_doe') || null;
                   const isSelected = selectedConversation?.Id === conversation.Id;
-                  
+
                   return (
                     <div
                       key={conversation.Id}
                       onClick={() => handleSelectConversation(conversation)}
                       className={cn(
-                        "p-4 hover:bg-gray-50 cursor-pointer transition-colors",
+                        "p-4 hover:bg-gray-50 cursor-pointer transition-colors flex gap-3",
                         isSelected && "bg-primary bg-opacity-10 border-r-2 border-primary"
                       )}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
-                          {otherParticipant?.username.charAt(0).toUpperCase()}
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
+                      <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                        {otherParticipant?.username?.charAt(0).toUpperCase() || '?'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
                             <span className={cn(
-                              "font-medium truncate",
+                              "font-medium truncate block",
                               isSelected ? "text-primary" : "text-gray-900"
                             )}>
-                              {otherParticipant?.username}
+                              {otherParticipant?.username || 'Unknown'}
                             </span>
-                            {conversation.unreadCount > 0 && (
-                              <div className="min-w-[18px] h-[18px] bg-primary text-white text-xs font-bold rounded-full flex items-center justify-center">
-                                {conversation.unreadCount > 9 ? '9+' : conversation.unreadCount}
-                              </div>
-                            )}
                           </div>
                           
-                          {conversation.lastMessage && (
-                            <>
-                              <p className={cn(
-                                "text-sm truncate mt-1",
-                                conversation.unreadCount > 0 ? "text-gray-900 font-medium" : "text-gray-600"
-                              )}>
-                                {conversation.lastMessage.content}
-</p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                {formatDistanceToNow(new Date(conversation.lastMessage.timestamp), { addSuffix: true })}
-                              </p>
-                            </>
+                          {conversation.unreadCount > 0 && (
+                            <div className="min-w-[18px] h-[18px] bg-primary text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                              {conversation.unreadCount > 9 ? '9+' : conversation.unreadCount}
+                            </div>
                           )}
                         </div>
+                        
+                        {conversation.lastMessage && (
+                          <>
+                            <p className={cn(
+                              "text-sm truncate mt-1",
+                              conversation.unreadCount > 0 ? "text-gray-900 font-medium" : "text-gray-600"
+                            )}>
+                              {conversation.lastMessage.content}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {formatDistanceToNow(new Date(conversation.lastMessage.timestamp), { addSuffix: true })}
+                            </p>
+                          </>
+                        )}
                       </div>
                     </div>
                   );
                 })}
+              </div>
               </div>
             )}
           </div>
@@ -425,11 +425,13 @@ const buildMessageThreads = (messages) => {
               {/* Messages Header */}
               <div className="p-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold">
-                      {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username.charAt(0).toUpperCase()}
+<div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-semibold">
+                      {selectedConversation.participants?.find(p => p.username !== 'john_doe')?.username?.charAt(0).toUpperCase() || '?'}
                     </div>
                     <div>
+                      <h2 className="font-semibold text-gray-900">
+                        {selectedConversation.participants?.find(p => p.username !== 'john_doe')?.username || 'Unknown User'}
+                      </h2>
                       <h2 className="font-medium text-gray-900">
                         {selectedConversation.participants.find(p => p.username !== 'john_doe')?.username}
                       </h2>
@@ -451,15 +453,21 @@ const buildMessageThreads = (messages) => {
                       >
                         <ApperIcon name="MoreVertical" size={18} />
                       </Button>
-                      {showActionMenu === selectedConversation.Id && (
+{showActionMenu === selectedConversation.Id && (
                         <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg py-2 w-48 z-50">
                           <button
+                            onClick={() => handleMarkAsUnread(selectedConversation.Id)}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                          >
+                            <ApperIcon name="Mail" size={16} />
+                            Mark as Unread
+                          </button>
+                          <button
                             onClick={() => {
-                              const otherUser = selectedConversation.participants.find(p => p.username !== 'john_doe');
+                              const otherUser = selectedConversation.participants?.find(p => p.Id !== 1);
                               setShowBlockConfirm(otherUser);
-                              setShowActionMenu(null);
                             }}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2 text-red-600"
                           >
                             <ApperIcon name="UserX" size={16} />
                             Block User
@@ -489,14 +497,19 @@ const buildMessageThreads = (messages) => {
                     {messages.map((thread) => (
                       <div key={thread.Id} className="space-y-3">
                         {/* Main Message */}
-                        <div className={cn(
+<div className={cn(
                           "flex gap-3 max-w-[85%] group",
                           thread.senderId === 1 ? "ml-auto flex-row-reverse" : ""
                         )}>
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                            {thread.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === thread.senderId)?.username.charAt(0).toUpperCase()}
-                          </div>
-                          
+                          {thread.senderId === 1 ? (
+                            <div className="w-8 h-8 rounded-full bg-indigo-400 flex items-center justify-center text-white text-sm font-semibold">
+                              J
+                            </div>
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-sm font-semibold">
+                              {selectedConversation.participants?.find(p => p.Id === thread.senderId)?.username?.charAt(0).toUpperCase() || '?'}
+                            </div>
+                          )}
                           <div className={cn("flex flex-col gap-1 flex-1", thread.senderId === 1 && "items-end")}>
                             <div className={cn(
                               "rounded-2xl px-4 py-2 max-w-full break-words relative group",
@@ -581,10 +594,15 @@ onClick={() => handleSendReply(thread.Id)}
                                 "flex gap-3 max-w-[80%] group",
                                 reply.senderId === 1 ? "ml-auto flex-row-reverse" : ""
                               )}>
-                                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-                                  {reply.senderId === 1 ? 'J' : selectedConversation.participants.find(p => p.Id === reply.senderId)?.username.charAt(0).toUpperCase()}
-                                </div>
-                                
+                                {reply.senderId === 1 ? (
+                                  <div className="w-8 h-8 rounded-full bg-indigo-400 flex items-center justify-center text-white text-sm font-semibold">
+                                    J
+                                  </div>
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700 text-sm font-semibold">
+                                    {selectedConversation.participants?.find(p => p.Id === reply.senderId)?.username?.charAt(0).toUpperCase() || '?'}
+                                  </div>
+                                )}
                                 <div className={cn("flex flex-col gap-1", reply.senderId === 1 && "items-end")}>
                                   <div className={cn(
                                     "rounded-2xl px-3 py-2 max-w-full break-words",
@@ -605,7 +623,7 @@ onClick={() => handleSendReply(thread.Id)}
                                       <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                                     )}
                                   </div>
-                                </div>
+</div>
                               </div>
                             ))}
                           </div>
@@ -647,9 +665,8 @@ onClick={() => handleSendReply(thread.Id)}
                     )}
                   </Button>
                 </div>
-                <div className="text-xs text-gray-500 mt-2">
-                  <strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
-</div>
+<strong>Tip:</strong> Use **bold**, *italic*, `code`, and other markdown formatting
+                </div>
               </form>
             </>
           )}
