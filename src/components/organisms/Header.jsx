@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useAuth } from "@/layouts/Root";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import SearchBar from "@/components/molecules/SearchBar";
@@ -134,12 +136,11 @@ useEffect(() => {
   );
 };
 const Header = ({ className }) => {
-  // Mock authentication state - replace with actual auth service
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated } = useSelector(state => state.user);
+  const { logout } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const navigate = useNavigate();
-
   const handleCreatePost = () => {
     setShowCreateModal(true);
   };
@@ -207,7 +208,7 @@ const Header = ({ className }) => {
             </button>
             {/* User Menu */}
 <div className="relative">
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <>
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -227,7 +228,7 @@ const Header = ({ className }) => {
                         <div className="text-xs text-gray-500">1,337 karma</div>
                       </div>
                       <Link 
-to="/profile/current_user"
+                        to="/profile/current_user"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
@@ -257,7 +258,7 @@ to="/profile/current_user"
                       >
                         <ApperIcon name="Settings" className="w-4 h-4" />
                         Settings
-</Link>
+                      </Link>
                       
                       <Link
                         to="/preferences"
@@ -277,7 +278,7 @@ to="/profile/current_user"
                       <div className="border-t border-gray-100 mt-1">
                         <button 
                           onClick={() => {
-                            setIsLoggedIn(false);
+                            logout();
                             setIsUserMenuOpen(false);
                             toast.info('Signed out successfully');
                           }}
@@ -291,16 +292,13 @@ to="/profile/current_user"
                   )}
                 </>
               ) : (
-                <button
-                  onClick={() => {
-                    setIsLoggedIn(true);
-                    toast.success('Welcome! You are now signed in.');
-                  }}
+                <Link
+                  to="/login"
                   className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
                 >
                   <ApperIcon name="LogIn" className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign In</span>
-                </button>
+                </Link>
               )}
             </div>
           </div>

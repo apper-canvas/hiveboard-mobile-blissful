@@ -1,0 +1,177 @@
+{
+  "/": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Homepage is public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/login": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Login is public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/signup": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Signup is public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/callback": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Callback is public",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/notifications": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/post/:id": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Public access",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/r/:communityName": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Public access",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/profile/:username": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "Public access",
+            "rule": "public"
+          }
+        ]
+      }
+    }
+  },
+  "/create-community": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/preferences": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/analytics": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/saved": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/hidden": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  },
+  "/messages": {
+    "allow": {
+      "when": {
+        "conditions": [
+          {
+            "label": "User must be logged in",
+            "rule": "authenticated"
+          }
+        ]
+      },
+      "redirectOnDeny": "/login"
+    }
+  }
+}
