@@ -387,10 +387,7 @@ export const notificationService = {
 };
 
 export default notificationService;
-import { getApperClient } from "@/services/api/apperClientInit";
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const notificationService = {
   getUnreadCount: async () => {
     try {
