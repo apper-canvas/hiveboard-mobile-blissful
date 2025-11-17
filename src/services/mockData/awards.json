@@ -1,0 +1,122 @@
+[
+  {
+    "Id": 1,
+    "name": "Golden Star",
+    "description": "Awarded for exceptional contribution to the community",
+    "icon": "Star",
+    "color": "yellow",
+    "points": 50
+  },
+  {
+    "Id": 2,
+    "name": "Rising Star",
+    "description": "Given to promising new members showing great potential",
+    "icon": "TrendingUp",
+    "color": "blue",
+    "points": 30
+  },
+  {
+    "Id": 3,
+    "name": "Helpful Soul",
+    "description": "Recognizes consistent helpful responses to community questions",
+    "icon": "Heart",
+    "color": "red",
+    "points": 25
+  },
+  {
+    "Id": 4,
+    "name": "Creative Mind",
+    "description": "Awarded for innovative ideas and creative solutions",
+    "icon": "Lightbulb",
+    "color": "purple",
+    "points": 35
+  },
+  {
+    "Id": 5,
+    "name": "Community Champion",
+    "description": "For outstanding leadership and community engagement",
+    "icon": "Crown",
+    "color": "orange",
+    "points": 60
+  },
+  {
+    "Id": 6,
+    "name": "Knowledge Keeper",
+    "description": "Recognizes detailed and educational contributions",
+    "icon": "BookOpen",
+    "color": "blue",
+    "points": 40
+  },
+  {
+    "Id": 7,
+    "name": "Thoughtful Contributor",
+    "description": "Awarded for well-reasoned and balanced discussions",
+    "icon": "MessageCircle",
+    "color": "green",
+    "points": 28
+  },
+  {
+    "Id": 8,
+    "name": "Perfect Post",
+    "description": "Given to posts that receive exceptional engagement and praise",
+    "icon": "Award",
+    "color": "yellow",
+    "points": 45
+  },
+  {
+    "Id": 9,
+    "name": "Bug Hunter",
+    "description": "For identifying and reporting important issues",
+    "icon": "AlertCircle",
+    "color": "red",
+    "points": 55
+  },
+  {
+    "Id": 10,
+    "name": "Mentor Master",
+    "description": "Recognizes consistent guidance and mentorship to others",
+    "icon": "Users",
+    "color": "green",
+    "points": 50
+  },
+  {
+    "Id": 11,
+    "name": "Quick Responder",
+    "description": "Awarded for providing timely and helpful responses",
+    "icon": "Zap",
+    "color": "orange",
+    "points": 20
+  },
+  {
+    "Id": 12,
+    "name": "Verified Expert",
+    "description": "For demonstrating exceptional expertise in a specific area",
+    "icon": "CheckCircle",
+    "color": "purple",
+    "points": 70
+  },
+  {
+    "Id": 13,
+    "name": "Community Builder",
+    "description": "Recognizes efforts in building and strengthening the community",
+    "icon": "Building2",
+    "color": "blue",
+    "points": 55
+  },
+  {
+    "Id": 14,
+    "name": "Active Participant",
+    "description": "For consistent and meaningful participation",
+    "icon": "Activity",
+    "color": "green",
+    "points": 22
+  },
+  {
+    "Id": 15,
+    "name": "Distinguished Member",
+    "description": "Highest honor for long-term dedication to the community",
+    "icon": "Trophy",
+    "color": "yellow",
+    "points": 100
+  }
+]
