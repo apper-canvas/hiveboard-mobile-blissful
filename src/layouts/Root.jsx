@@ -6,6 +6,14 @@ import { clearUser, setInitialized, setUser } from "@/store/userSlice";
 
 export const AuthContext = createContext(null);
 
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
+};
+
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
     <div className="text-center space-y-4">
