@@ -124,19 +124,19 @@ const TrendingWidget = ({ showTitle = true, maxItems = 3, compact = false }) => 
                     {formatGrowthPercentage(community.growthPercentage)}
                   </span>
                 </div>
-                {!compact && (
+{!compact && (
                   <div className="text-xs text-gray-500">
                     {community.newMembersToday} new today
                   </div>
-</div>
+                )}
+              </div>
             </div>
           </Link>
           );
         })}
       </div>
 
-      {trending.length >= 3 && (
-        <div className="mt-4 pt-3 border-t border-gray-100">
+{trending.length >= 3 && (
         <div className="mt-4 pt-3 border-t border-gray-100">
           <Link 
             to="/r/all" 
