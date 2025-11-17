@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
+import { useAuth } from "@/hooks/useAuth";
 import { savedService } from "@/services/api/savedService";
 import { hiddenService } from "@/services/api/hiddenService";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import ApperIcon from "@/components/ApperIcon";
 import AwardDisplay from "@/components/molecules/AwardDisplay";
 import VoteButtons from "@/components/molecules/VoteButtons";
 import AwardModal from "@/components/molecules/AwardModal";
+
 const PostCard = ({ post, className, onPostUpdate }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -151,8 +153,6 @@ const handleHide = async () => {
       toast.error(error?.message || "Failed to hide post");
     }
   };
-
-  const handlePostClick = (e) => {
 const handlePostClick = (e) => {
     if (e.target.closest(".vote-buttons") || e.target.closest(".community-link")) {
       return;
@@ -167,7 +167,6 @@ useEffect(() => {
       setPostAwards(post?.awards || []);
     }
   }, [post]);
-
   const getContentTypeIcon = () => {
     if (!currentPost?.contentType) return "FileText";
     switch (currentPost?.contentType) {
@@ -182,8 +181,9 @@ useEffect(() => {
       default:
         return "FileText";
     }
-  };
-const handleAwardGiven = (award) => {
+};
+
+  const handleAwardGiven = (award) => {
     const updatedAwards = [...(postAwards || []), award];
     setPostAwards(updatedAwards);
   };
@@ -192,7 +192,8 @@ const handleAwardGiven = (award) => {
     if (!currentPost?.pollOptions) return 0;
     return currentPost?.pollOptions.reduce((sum, opt) => sum + (opt?.votes || 0), 0);
   };
-return (
+
+  return (
     <div className={cn(
       "bg-white rounded-xl shadow-sm border border-gray-100 card-hover cursor-pointer"
     )}>
@@ -215,6 +216,31 @@ return (
               isLiked={currentPost?.isLiked || false}
               onLike={handleLike}
             />
+</div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {/* Metadata */}
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <Link 
+              to={`/r/${currentPost?.communityName}`}
+              className="community-link font-semibold text-gray-900 hover:text-primary transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              r/{currentPost?.communityName}
+            </Link>
+            <span>•</span>
+            <span>u/{currentPost?.authorUsername}</span>
+            <span>•</span>
+            <span>{currentPost?.timestamp && isValid(new Date(currentPost?.timestamp)) 
+              ? `${formatDistanceToNow(new Date(currentPost?.timestamp))} ago`
+              : 'Date unavailable'}</span>
+            <ApperIcon
+              name="MoreHorizontal"
+              className="w-4 h-4 text-gray-400 ml-auto"
+            />
+          </div>
           </div>
         </div>
 {/* Content */}
@@ -239,7 +265,6 @@ return (
               className="w-4 h-4 text-gray-400 ml-auto"
             />
           </div>
-
           {/* Title */}
           <h2 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary transition-colors">
             {currentPost?.title}
@@ -250,10 +275,10 @@ return (
             <p className="text-gray-700 mb-3 line-clamp-3">
               {currentPost?.content.length > 200 
                 ? `${currentPost?.content.substring(0, 200)}...` 
-                : currentPost?.content}
-            </p>
+</p>
           )}
-{/* Actions */}
+
+          {/* Actions */}
           {currentPost?.contentType === 'poll' ? (
             <div className="space-y-4">
               {/* Poll Time Remaining */}
@@ -270,7 +295,9 @@ return (
                   Poll ended
                 </div>
               )}
-{/* Show Results or Voting Interface */}
+
+              {/* Show Results or Voting Interface */}
+              {showResults || !currentPost?.pollActive ? (
               {showResults || !currentPost?.pollActive ? (
                 <div className="space-y-2">
                   {currentPost?.pollOptions?.map((opt, idx) => {
@@ -292,10 +319,10 @@ return (
                     );
                   })}
                 </div>
-              ) : (
+) : (
                 <div className="space-y-2">
                   {currentPost?.pollOptions?.map((opt, idx) => (
-<button
+                    <button
                       key={idx}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -322,10 +349,9 @@ return (
                   View Results
                 </button>
               )}
-
-              {/* End Poll Early for Creator */}
+{/* End Poll Early for Creator */}
               {currentPost?.pollActive && currentPost?.authorUsername === user?.username && (
-<button
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleEndPollEarly();
@@ -346,10 +372,10 @@ return (
               )}
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
-                  <ApperIcon name="MessageSquare" className="w-4 h-4" />
+<ApperIcon name="MessageSquare" className="w-4 h-4" />
                   <span>{currentPost?.commentCount} comments</span>
                 </div>
-<button 
+                <button 
                   onClick={(e) => {
                     e.stopPropagation();
                     handleSave();
@@ -395,7 +421,8 @@ return (
             />
           </div>
         )}
-      </div>
+</div>
+
       {/* Award Modal */}
       <AwardModal
         isOpen={showAwardModal}
@@ -404,30 +431,6 @@ return (
         contentType="post"
         contentId={currentPost?.Id}
       />
-        </div>
-
-        {/* Thumbnail */}
-        {currentPost.thumbnailUrl && (
-          <div className="flex-shrink-0">
-            <img 
-              src={currentPost.thumbnailUrl} 
-              alt={currentPost.title}
-              className="w-20 h-20 rounded-lg object-cover bg-gray-200"
-              onError={(e) => {
-                e.target.style.display = "none";
-              }}
-            />
-          </div>
-        )}
-      </div>
-{/* Award Modal */}
-      <AwardModal
-        isOpen={showAwardModal}
-        onClose={() => setShowAwardModal(false)}
-        onAwardGiven={handleAwardGiven}
-        contentType="post"
-        contentId={currentPost.Id}
-/>
     </div>
   );
 };
