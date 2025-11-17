@@ -275,9 +275,8 @@ return (
                 <span>Report</span>
               </button>
             </div>
-          </div>
+</div>
         </div>
-      </div>
       </div>
 
       {/* Comments Section */}
@@ -289,7 +288,7 @@ return (
         </div>
       )}
 
-{/* Award Modal */}
+      {/* Award Modal */}
       {canAward && (
         <AwardModal
           postId={post.Id}
@@ -302,6 +301,6 @@ return (
           onClose={() => setShowAwardModal(false)}
         />
       )}
-</div>
+    </div>
   );
 }
