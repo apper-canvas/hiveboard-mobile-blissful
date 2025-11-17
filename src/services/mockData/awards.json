@@ -1,0 +1,66 @@
+[
+  {
+    "Id": 1,
+    "name": "Gold",
+    "icon": "Award",
+    "color": "yellow",
+    "cost": 500,
+    "description": "Give Gold to reward excellence"
+  },
+  {
+    "Id": 2,
+    "name": "Silver",
+    "icon": "Star",
+    "color": "gray",
+    "cost": 100,
+    "description": "Give Silver to say thanks"
+  },
+  {
+    "Id": 3,
+    "name": "Platinum",
+    "icon": "Crown",
+    "color": "blue",
+    "cost": 1800,
+    "description": "The highest honor"
+  },
+  {
+    "Id": 4,
+    "name": "Helpful",
+    "icon": "ThumbsUp",
+    "color": "green",
+    "cost": 50,
+    "description": "This is helpful"
+  },
+  {
+    "Id": 5,
+    "name": "Wholesome",
+    "icon": "Heart",
+    "color": "red",
+    "cost": 125,
+    "description": "Spread the love"
+  },
+  {
+    "Id": 6,
+    "name": "Funny",
+    "icon": "Laugh",
+    "color": "yellow",
+    "cost": 75,
+    "description": "This made me laugh"
+  },
+  {
+    "Id": 7,
+    "name": "Mind Blown",
+    "icon": "Zap",
+    "color": "purple",
+    "cost": 150,
+    "description": "Mind = Blown"
+  },
+  {
+    "Id": 8,
+    "name": "Take My Energy",
+    "icon": "Flame",
+    "color": "orange",
+    "cost": 50,
+    "description": "Take my energy!"
+  }
+]

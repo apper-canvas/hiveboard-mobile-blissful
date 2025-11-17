@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "participants": [
+      { "Id": 1, "username": "john_doe", "avatar": null },
+      { "Id": 2, "username": "sarah_smith", "avatar": null }
+    ],
+    "lastMessage": {
+      "Id": 15,
+      "senderId": 2,
+      "content": "Thanks for sharing that article! Really insightful perspective on community building.",
+      "timestamp": "2024-01-20T14:30:00Z",
+      "isRead": false
+    },
+    "unreadCount": 2,
+    "updatedAt": "2024-01-20T14:30:00Z"
+  },
+  {
+    "Id": 2,
+    "participants": [
+      { "Id": 1, "username": "john_doe", "avatar": null },
+      { "Id": 3, "username": "mike_wilson", "avatar": null }
+    ],
+    "lastMessage": {
+      "Id": 23,
+      "senderId": 1,
+      "content": "Sure, I can help you set up the community guidelines. When works for you?",
+      "timestamp": "2024-01-20T10:15:00Z",
+      "isRead": true
+    },
+    "unreadCount": 0,
+    "updatedAt": "2024-01-20T10:15:00Z"
+  },
+  {
+    "Id": 3,
+    "participants": [
+      { "Id": 1, "username": "john_doe", "avatar": null },
+      { "Id": 4, "username": "emma_brown", "avatar": null }
+    ],
+    "lastMessage": {
+      "Id": 31,
+      "senderId": 4,
+      "content": "Hey! Loved your post about sustainable tech. We should collaborate on something similar.",
+      "timestamp": "2024-01-19T16:45:00Z",
+      "isRead": false
+    },
+    "unreadCount": 1,
+    "updatedAt": "2024-01-19T16:45:00Z"
+  },
+  {
+    "Id": 4,
+    "participants": [
+      { "Id": 1, "username": "john_doe", "avatar": null },
+      { "Id": 5, "username": "alex_johnson", "avatar": null }
+    ],
+    "lastMessage": {
+      "Id": 42,
+      "senderId": 5,
+      "content": "The community meetup was great! Thanks for organizing it.",
+      "timestamp": "2024-01-18T19:20:00Z",
+      "isRead": true
+    },
+    "unreadCount": 0,
+    "updatedAt": "2024-01-18T19:20:00Z"
+  },
+  {
+    "Id": 5,
+    "participants": [
+      { "Id": 1, "username": "john_doe", "avatar": null },
+      { "Id": 6, "username": "lisa_davis", "avatar": null }
+    ],
+    "lastMessage": {
+      "Id": 55,
+      "senderId": 6,
+      "content": "Question about the new feature rollout - do you have time for a quick call?",
+      "timestamp": "2024-01-17T11:30:00Z",
+      "isRead": false
+    },
+    "unreadCount": 3,
+    "updatedAt": "2024-01-17T11:30:00Z"
+  }
+]

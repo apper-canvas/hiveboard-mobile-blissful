@@ -1,0 +1,265 @@
+[
+  {
+    "Id": 1,
+    "type": "upvote_post",
+    "title": "Your post received an upvote",
+    "message": "tech_researcher upvoted your post 'The Future of Web Development'",
+    "userId": "tech_researcher",
+    "targetType": "post",
+    "targetId": 15,
+    "targetTitle": "The Future of Web Development",
+    "isRead": false,
+    "timestamp": 1704067200000,
+    "metadata": {
+      "postTitle": "The Future of Web Development",
+      "community": "technology",
+      "karma": 1
+    }
+  },
+  {
+    "Id": 2,
+    "type": "upvote_comment",
+    "title": "Your comment received an upvote",
+    "message": "space_explorer upvoted your comment on 'Mars Mission Updates'",
+    "userId": "space_explorer",
+    "targetType": "comment",
+    "targetId": 42,
+    "targetTitle": "Mars Mission Updates",
+    "isRead": false,
+    "timestamp": 1704063600000,
+    "metadata": {
+      "commentContent": "This is fascinating! The technological advances required for this mission are incredible.",
+      "postTitle": "Mars Mission Updates",
+      "community": "science",
+      "karma": 1
+    }
+  },
+  {
+    "Id": 3,
+    "type": "reply",
+    "title": "New reply to your comment",
+    "message": "alex_dev replied to your comment: 'I completely agree with your assessment...'",
+    "userId": "alex_dev",
+    "targetType": "comment",
+    "targetId": 28,
+    "targetTitle": "Best JavaScript Frameworks 2024",
+    "isRead": true,
+    "timestamp": 1704060000000,
+    "metadata": {
+      "replyContent": "I completely agree with your assessment. React continues to dominate, but Vue and Svelte are gaining traction.",
+      "originalComment": "The JavaScript ecosystem evolves so quickly these days.",
+      "postTitle": "Best JavaScript Frameworks 2024",
+      "community": "programming"
+    }
+  },
+  {
+    "Id": 4,
+    "type": "mention",
+    "title": "You were mentioned in a comment",
+    "message": "coding_guru mentioned you: '@current_user have you tried the new React features?'",
+    "userId": "coding_guru",
+    "targetType": "comment",
+    "targetId": 55,
+    "targetTitle": "React 18 Features Deep Dive",
+    "isRead": false,
+    "timestamp": 1704056400000,
+    "metadata": {
+      "mentionContext": "@current_user have you tried the new React features? Would love to hear your thoughts on concurrent rendering.",
+      "postTitle": "React 18 Features Deep Dive",
+      "community": "programming"
+    }
+  },
+  {
+    "Id": 5,
+    "type": "new_follower",
+    "title": "New follower",
+    "message": "web_designer is now following you",
+    "userId": "web_designer",
+    "targetType": "user",
+    "targetId": "current_user",
+    "isRead": false,
+    "timestamp": 1704052800000,
+    "metadata": {
+      "followerKarma": 2450,
+      "followerJoinDate": 1690000000000
+    }
+  },
+  {
+    "Id": 6,
+    "type": "award",
+    "title": "You received an award!",
+    "message": "startup_founder gave you a Gold Award for your post 'Building Scalable Applications'",
+    "userId": "startup_founder",
+    "targetType": "post",
+    "targetId": 8,
+    "targetTitle": "Building Scalable Applications",
+    "isRead": true,
+    "timestamp": 1704049200000,
+    "metadata": {
+      "awardType": "gold",
+      "awardValue": 100,
+      "postTitle": "Building Scalable Applications",
+      "community": "programming",
+      "message": "Excellent breakdown of microservices architecture!"
+    }
+  },
+  {
+    "Id": 7,
+    "type": "content_removed",
+    "title": "Your content was removed",
+    "message": "Your post 'Controversial Tech Opinion' was removed by moderators for violating community guidelines",
+    "userId": "mod_sarah",
+    "targetType": "post",
+    "targetId": 33,
+    "targetTitle": "Controversial Tech Opinion",
+    "isRead": false,
+    "timestamp": 1704045600000,
+    "metadata": {
+      "reason": "Violates community rule #3: Keep discussions respectful and constructive",
+      "community": "technology",
+      "appealable": true,
+      "removedBy": "mod_sarah"
+    }
+  },
+  {
+    "Id": 8,
+    "type": "ban",
+    "title": "Community ban notification",
+    "message": "You have been temporarily banned from r/programming for 7 days",
+    "userId": "mod_alex",
+    "targetType": "community",
+    "targetId": 2,
+    "targetTitle": "programming",
+    "isRead": true,
+    "timestamp": 1704042000000,
+    "metadata": {
+      "duration": "7 days",
+      "reason": "Repeated violations of posting guidelines",
+      "community": "programming",
+      "bannedBy": "mod_alex",
+      "appealable": true,
+      "expiresAt": 1704646800000
+    }
+  },
+  {
+    "Id": 9,
+    "type": "mod_invite",
+    "title": "Moderation invite",
+    "message": "You've been invited to moderate r/webdev",
+    "userId": "head_mod",
+    "targetType": "community",
+    "targetId": 5,
+    "targetTitle": "webdev",
+    "isRead": false,
+    "timestamp": 1704038400000,
+    "metadata": {
+      "community": "webdev",
+      "invitedBy": "head_mod",
+      "permissions": ["posts", "comments", "users"],
+      "expiresAt": 1704643200000
+    }
+  },
+  {
+    "Id": 10,
+    "type": "message",
+    "title": "New private message",
+    "message": "designer_pro sent you a message: 'Collaboration opportunity'",
+    "userId": "designer_pro",
+    "targetType": "message",
+    "targetId": 15,
+    "targetTitle": "Collaboration opportunity",
+    "isRead": false,
+    "timestamp": 1704034800000,
+    "metadata": {
+      "messagePreview": "Hi! I came across your posts about React development and would love to discuss a potential collaboration...",
+      "subject": "Collaboration opportunity"
+    }
+  },
+  {
+    "Id": 11,
+    "type": "upvote_post",
+    "title": "Your post received an upvote",
+    "message": "data_scientist upvoted your post 'Machine Learning Basics'",
+    "userId": "data_scientist",
+    "targetType": "post",
+    "targetId": 22,
+    "targetTitle": "Machine Learning Basics",
+    "isRead": true,
+    "timestamp": 1704031200000,
+    "metadata": {
+      "postTitle": "Machine Learning Basics",
+      "community": "datascience",
+      "karma": 1
+    }
+  },
+  {
+    "Id": 12,
+    "type": "reply",
+    "title": "New reply to your comment",
+    "message": "python_dev replied to your comment: 'You should also consider using FastAPI...'",
+    "userId": "python_dev",
+    "targetType": "comment",
+    "targetId": 67,
+    "targetTitle": "Python Web Frameworks Comparison",
+    "isRead": true,
+    "timestamp": 1704027600000,
+    "metadata": {
+      "replyContent": "You should also consider using FastAPI for modern async applications. It's incredibly fast and has great documentation.",
+      "originalComment": "Django vs Flask is always a tough choice for new projects.",
+      "postTitle": "Python Web Frameworks Comparison",
+      "community": "python"
+    }
+  },
+  {
+    "Id": 13,
+    "type": "award",
+    "title": "You received an award!",
+    "message": "community_helper gave you a Silver Award for your helpful comment",
+    "userId": "community_helper",
+    "targetType": "comment",
+    "targetId": 89,
+    "targetTitle": "Getting Started with Docker",
+    "isRead": false,
+    "timestamp": 1704024000000,
+    "metadata": {
+      "awardType": "silver",
+      "awardValue": 25,
+      "commentContent": "Here's a step-by-step guide that should help you get started...",
+      "postTitle": "Getting Started with Docker",
+      "community": "devops",
+      "message": "Thanks for the detailed explanation!"
+    }
+  },
+  {
+    "Id": 14,
+    "type": "new_follower",
+    "title": "New follower",
+    "message": "junior_dev is now following you",
+    "userId": "junior_dev",
+    "targetType": "user",
+    "targetId": "current_user",
+    "isRead": false,
+    "timestamp": 1704020400000,
+    "metadata": {
+      "followerKarma": 156,
+      "followerJoinDate": 1700000000000
+    }
+  },
+  {
+    "Id": 15,
+    "type": "mention",
+    "title": "You were mentioned in a post",
+    "message": "tech_blogger mentioned you: '@current_user shared great insights on this topic'",
+    "userId": "tech_blogger",
+    "targetType": "post",
+    "targetId": 44,
+    "targetTitle": "Community Roundup: Best Discussions This Week",
+    "isRead": true,
+    "timestamp": 1704016800000,
+    "metadata": {
+      "mentionContext": "@current_user shared great insights on this topic last week. Check out their profile for more quality content!",
+      "postTitle": "Community Roundup: Best Discussions This Week",
+      "community": "technology"
+    }
+  }
+]
