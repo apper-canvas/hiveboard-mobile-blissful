@@ -1,63 +1,73 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
 import { postService } from "@/services/api/postService";
+import { commentService } from "@/services/api/commentService";
 import { awardService } from "@/services/api/awardService";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import AwardDisplay from "@/components/molecules/AwardDisplay";
 import VoteButtons from "@/components/molecules/VoteButtons";
 import AwardModal from "@/components/molecules/AwardModal";
 import Loading from "@/components/ui/Loading";
+import Empty from "@/components/ui/Empty";
 import ErrorView from "@/components/ui/ErrorView";
 import CommentSection from "@/components/organisms/CommentSection";
-const PostDetail = () => {
-const { postId } = useParams();
+export default function PostDetail() {
+  const { postId } = useParams();
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
+
   const [post, setPost] = useState(null);
-const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [commentCount, setCommentCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showAwardModal, setShowAwardModal] = useState(false);
+  const [postAwards, setPostAwards] = useState([]);
+  const [canAward, setCanAward] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [postAwards, setPostAwards] = useState([]);
-  const [showAwardModal, setShowAwardModal] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+  // Wrap loadPost in useCallback to stabilize the reference
 const loadPost = useCallback(async () => {
-  try {
-    setLoading(true);
-    setError("");
-    const postIdInt = parseInt(postId, 10);
-    if (isNaN(postIdInt)) {
-      setError("Invalid post ID");
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Fetch post with parseInt to ensure correct type
+      const postData = await postService.getById(parseInt(postId));
+      
+      if (!postData) {
+        setError('Post not found');
+        setPost(null);
+        setLoading(false);
+        return;
+      }
+setPost(postData);
+      
+      // Fetch awards for this post
+      const awards = await awardService.getPostAwards(postData.Id);
+      setPostAwards(awards || []);
+      
+      // Check if user can award
+      setCanAward(user?.Id !== postData.userId);
+      
       setLoading(false);
-      return;
-    }
-    const postData = await postService.getById(postIdInt);
-    if (!postData) {
-      setError("Post not found");
+    } catch (err) {
+      console.error('Error loading post:', err);
+      setError(err?.message || 'Failed to load post');
+      setPost(null);
       setLoading(false);
-      return;
     }
-    setPost(postData);
-    setLoading(false);
-  } catch (err) {
-    setError(err.message || "Failed to load post");
-    setLoading(false);
-  }
-}, [postId]);
+  }, [postId, user?.Id]);
 
-useEffect(() => {
+  // Effect now depends only on postId and loadPost is stable
+  useEffect(() => {
     if (postId) {
-      loadPost();
+      loadPost()
     }
-  }, [postId, loadPost]);
-
-useEffect(() => {
-    // Check if post is saved or hidden after post is loaded
-    if (post && post.Id) {
-      setIsSaved(postService.isPostSaved(post.Id));
-      setIsHidden(postService.isPostHidden(post.Id));
-    }
-  }, [post]);
+  }, [postId, loadPost])
 
   const handleVote = async (voteType) => {
     if (!post) return;
@@ -76,8 +86,9 @@ useEffect(() => {
     } catch (error) {
       toast.error("Failed to vote. Please try again.");
     }
-  };
-const handleLike = async () => {
+};
+
+  const handleLike = async () => {
     try {
       const updatedPost = await postService.like(post.Id);
       setPost(updatedPost);
@@ -91,7 +102,9 @@ const handleLike = async () => {
       toast.error("Failed to like post. Please try again.");
     }
   };
-const handleSave = async () => {
+};
+
+  const handleSave = async () => {
     try {
       if (isSaved) {
         await postService.unsavePost(post.Id);
@@ -157,9 +170,9 @@ const handleSave = async () => {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Post Content */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="flex gap-6 p-6">
+<div className="flex gap-6 p-6">
           {/* Vote Buttons */}
-<div className="flex-shrink-0">
+          <div className="flex-shrink-0">
             <div className="flex gap-4">
               <VoteButtons 
                 upvotes={post.upvotes}
@@ -187,18 +200,18 @@ const handleSave = async () => {
                 className="font-semibold text-gray-900 hover:text-primary transition-colors"
               >
                 r/{post.communityName}
+r/{post.communityName}
               </Link>
-<span>•</span>
-<span>Posted by u/{post.authorUsername}</span>
-<span>•</span>
-<span>{post?.timestamp && isValid(new Date(post.timestamp)) 
-? `${formatDistanceToNow(new Date(post.timestamp))} ago`
-: 'Date unavailable'}</span>
-<ApperIcon
+              <span>•</span>
+              <span>Posted by u/{post.authorUsername}</span>
+              <span>•</span>
+              <span>{post?.timestamp && isValid(new Date(post.timestamp)) 
+                ? `${formatDistanceToNow(new Date(post.timestamp))} ago`
+                : 'Date unavailable'}</span>
+              <ApperIcon
                 name="MoreHorizontal"
                 className="w-4 h-4 text-gray-400 ml-auto"
               />
-            </div>
 
             {/* Title */}
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
@@ -228,17 +241,17 @@ const handleSave = async () => {
               </div>
             )}
 
-            {/* Actions */}
+{/* Actions */}
             <div className="flex items-center gap-6 text-sm text-gray-600 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
-<ApperIcon name="MessageSquare" className="w-4 h-4" />
+                <ApperIcon name="MessageSquare" className="w-4 h-4" />
                 <span className="font-medium">{commentCount} comments</span>
               </div>
               <button className="flex items-center gap-2 hover:text-primary transition-colors">
                 <ApperIcon name="Share" className="w-4 h-4" />
                 <span>Share</span>
               </button>
-<button 
+              <button 
                 onClick={handleSave}
                 className={`flex items-center gap-2 hover:text-primary transition-colors ${isSaved ? 'text-primary' : ''}`}
               >
@@ -251,7 +264,7 @@ const handleSave = async () => {
               >
                 <ApperIcon name="EyeOff" className="w-4 h-4" />
                 <span>Hide</span>
-</button>
+              </button>
               <button
                 onClick={() => setShowAwardModal(true)}
                 className="flex items-center gap-2 hover:text-primary transition-colors"
@@ -268,30 +281,31 @@ const handleSave = async () => {
           </div>
         </div>
       </div>
+{/* Comments Section */}
+      <CommentSection postId={postId} onCommentCountChange={setCommentCount} />
 
-      {/* Comments Section */}
-<CommentSection postId={postId} onCommentCountChange={setCommentCount} />
-{/* Awards Display */}
-        {postAwards.length > 0 && (
-          <div className="flex items-center gap-4 py-4 border-t border-gray-200">
-            <span className="text-sm font-semibold text-gray-700">Awards:</span>
-            <AwardDisplay awards={postAwards} />
-          </div>
-        )}
+      {/* Awards Display */}
+      {postAwards.length > 0 && (
+        <div className="flex items-center gap-4 py-4 border-t border-gray-200">
+          <span className="text-sm font-semibold text-gray-700">Awards:</span>
+          <AwardDisplay awards={postAwards} />
+        </div>
+      )}
 
-        {/* Award Modal */}
+      {/* Award Modal */}
+      {canAward && (
         <AwardModal
+          postId={post.Id}
           isOpen={showAwardModal}
-          onClose={() => setShowAwardModal(false)}
           onAwardGiven={() => {
-            const awards = awardService.getPostAwards(post.Id);
-            setPostAwards(awards);
+            const updatedAwards = awardService.getPostAwards(post.Id);
+            setPostAwards(updatedAwards || []);
+            toast.success('Award given successfully!');
           }}
-          contentType="post"
-          contentId={post.Id}
+          onClose={() => setShowAwardModal(false)}
         />
-      </div>
+      )}
+    </div>
   );
-};
-
-export default PostDetail;
+}
+}
