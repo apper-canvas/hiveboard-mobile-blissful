@@ -4,15 +4,7 @@ import { useEffect, useState, createContext, useContext } from "react";
 import { setUser, clearUser, setInitialized } from "@/store/userSlice";
 import { getApperClient } from "@/services/apperClient";
 
-const AuthContext = createContext(null);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within Root component");
-  }
-  return context;
-};
+export const AuthContext = createContext(null);
 
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
