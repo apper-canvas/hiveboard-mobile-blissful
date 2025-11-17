@@ -394,10 +394,9 @@ useEffect(() => {
               src={currentPost?.thumbnailUrl} 
               alt={currentPost?.title}
               className="w-20 h-20 rounded-lg object-cover bg-gray-200"
-              onError={(e) => {
+onError={(e) => {
                 e.target.style.display = "none";
               }}
-}}
             />
           </div>
         )}
@@ -410,8 +409,9 @@ useEffect(() => {
           contentType="post"
           contentId={currentPost?.Id}
         />
-      </div>
+</div>
     </div>
   );
+};
 
 export default PostCard;
