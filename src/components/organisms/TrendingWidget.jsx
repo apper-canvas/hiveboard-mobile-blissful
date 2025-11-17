@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { formatDistanceToNow, isValid } from 'date-fns';
-import { communityService } from '@/services/api/communityService';
-import ApperIcon from '@/components/ApperIcon';
-import Loading from '@/components/ui/Loading';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { formatDistanceToNow, isValid } from "date-fns";
+import { communityService } from "@/services/api/communityService";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
 const TrendingWidget = ({ showTitle = true, maxItems = 3, compact = false }) => {
   const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,31 +68,37 @@ const TrendingWidget = ({ showTitle = true, maxItems = 3, compact = false }) => 
               : 'Time unavailable'}
           </span>
         </div>
-      )}
+)}
 
-      <div className={`space-y-${compact ? '3' : '4'}`}>
-        {trending.map((community, index) => (
-          <Link
-            key={community.name}
-            to={`/r/${community.name}`}
-            className="block group hover:bg-gray-50 rounded-lg p-3 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              {/* Trending Rank */}
-              <div className={`${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold ${compact ? 'text-xs' : 'text-sm'}`}>
-                {index + 1}
-              </div>
+      <div className={compact ? 'space-y-3' : 'space-y-4'}>
+        {trending.map((community, index) => {
+          // Defensive check: ensure community.name exists
+          if (!community || !community.name) {
+            return null;
+          }
+          
+          return (
+    <Link
+      key={community.name}
+      to={`/r/${community.name}`}
+      className="block group hover:bg-gray-50 rounded-lg p-3 transition-colors"
+    >
+      <div className="flex items-center gap-3">
+        {/* Trending Rank */}
+        <div className={`${compact ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold ${compact ? 'text-xs' : 'text-sm'}`}>
+          {index + 1}
+        </div>
 
-              {/* Community Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`font-semibold text-gray-900 group-hover:text-primary transition-colors ${compact ? 'text-sm' : ''}`}>
-                    r/{community.name}
-                  </span>
-                  <div className="flex items-center gap-1 text-green-600">
-                    <ApperIcon name="TrendingUp" className="w-3 h-3" />
-                    <span className="text-xs font-medium">
-                      {formatGrowthPercentage(community.growthPercentage)}
+        {/* Community Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className={`font-semibold text-gray-900 group-hover:text-primary transition-colors ${compact ? 'text-sm' : ''}`}>
+              r/{community.name || 'unknown'}
+            </span>
+            <div className="flex items-center gap-1 text-green-600">
+              <ApperIcon name="TrendingUp" className="w-3 h-3" />
+              <span className="text-xs font-medium">
+                {formatGrowthPercentage(community.growthPercentage || 0)}
                     </span>
                   </div>
                 </div>
@@ -122,14 +128,15 @@ const TrendingWidget = ({ showTitle = true, maxItems = 3, compact = false }) => 
                   <div className="text-xs text-gray-500">
                     {community.newMembersToday} new today
                   </div>
-                )}
-              </div>
+</div>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
 
       {trending.length >= 3 && (
+        <div className="mt-4 pt-3 border-t border-gray-100">
         <div className="mt-4 pt-3 border-t border-gray-100">
           <Link 
             to="/r/all" 
