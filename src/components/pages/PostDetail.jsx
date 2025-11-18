@@ -44,7 +44,9 @@ const loadPost = useCallback(async () => {
         setLoading(false);
         return;
       }
-setPost(postData);
+      
+      setPost(postData);
+      setLoading(false); // Clear loading immediately after post is set
       
       // Fetch awards for this post
       const awards = await awardService.getPostAwards(postData.Id);
@@ -53,7 +55,6 @@ setPost(postData);
       // Check if user can award
       setCanAward(user?.Id !== postData.userId);
       
-      setLoading(false);
     } catch (err) {
       console.error('Error loading post:', err);
       setError(err?.message || 'Failed to load post');
