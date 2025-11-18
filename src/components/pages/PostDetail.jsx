@@ -68,11 +68,11 @@ setPost(postData);
       loadPost();
     }
   }, [postId, loadPost]);
-  const handleVote = async (voteType) => {
+const handleVote = async (voteType) => {
     if (!post) return;
     
     try {
-      const updatedPost = await postService.vote(post.Id, voteType);
+      const updatedPost = await postService.vote(post.Id, voteType, user);
       setPost(updatedPost);
       
       if (voteType === "up" && updatedPost.userVote === "up") {
@@ -83,13 +83,16 @@ setPost(postData);
         toast.success("Vote removed");
       }
     } catch (error) {
+      console.error('Error voting on post:', error);
       toast.error("Failed to vote. Please try again.");
     }
-};
+  };
 
-  const handleLike = async () => {
+const handleLike = async () => {
+    if (!post) return;
+    
     try {
-      const updatedPost = await postService.like(post.Id);
+      const updatedPost = await postService.like(post.Id, user);
       setPost(updatedPost);
       
       if (updatedPost.isLiked) {
@@ -97,33 +100,40 @@ setPost(postData);
       } else {
         toast.success("Like removed");
       }
-} catch (error) {
+    } catch (error) {
+      console.error('Error liking post:', error);
       toast.error("Failed to like post. Please try again.");
     }
   };
 
-  const handleSave = async () => {
+const handleSave = async () => {
+    if (!post) return;
+    
     try {
       if (isSaved) {
-        await postService.unsavePost(post.Id);
+        await postService.unsavePost(post.Id, user);
         setIsSaved(false);
         toast.success("Post removed from saved");
       } else {
-        await postService.savePost(post.Id);
+        await postService.savePost(post.Id, user);
         setIsSaved(true);
         toast.success("Post saved successfully");
       }
     } catch (error) {
+      console.error('Error updating save status:', error);
       toast.error("Failed to update save status");
     }
   };
   
-  const handleHide = async () => {
+const handleHide = async () => {
+    if (!post) return;
+    
     try {
-      await postService.hidePost(post.Id);
+      await postService.hidePost(post.Id, user);
       setIsHidden(true);
       toast.success("Post hidden from feed");
     } catch (error) {
+      console.error('Error hiding post:', error);
       toast.error("Failed to hide post");
     }
   };

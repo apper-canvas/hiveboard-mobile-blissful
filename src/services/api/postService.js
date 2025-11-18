@@ -171,7 +171,9 @@ const newPost = {
   },
 
 async vote(id, voteType, user) {
-    checkAuthentication(user);
+    if (user) {
+      checkAuthentication(user);
+    }
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {
@@ -274,7 +276,9 @@ async votePoll(id, optionIndex, user) {
   },
 
 async like(id, user) {
-    checkAuthentication(user);
+    if (user) {
+      checkAuthentication(user);
+    }
     await delay(200);
     const postIndex = posts.findIndex(p => p.Id === parseInt(id));
     if (postIndex === -1) {
@@ -320,7 +324,9 @@ async update(id, data) {
   
 // Save/Unsave functionality
   async savePost(postId, user) {
-    checkAuthentication(user);
+    if (user) {
+      checkAuthentication(user);
+    }
     await delay(200);
     if (!savedPosts.includes(postId)) {
       savedPosts.push(postId);
@@ -328,17 +334,22 @@ async update(id, data) {
     }
     return true;
   },
-async unsavePost(postId, user) {
-    checkAuthentication(user);
+  
+  async unsavePost(postId, user) {
+    if (user) {
+      checkAuthentication(user);
+    }
     await delay(200);
     savedPosts = savedPosts.filter(id => id !== postId);
     localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
     return true;
   },
   
-  // Hide/Unhide functionality
+// Hide/Unhide functionality
   async hidePost(postId, user) {
-    checkAuthentication(user);
+    if (user) {
+      checkAuthentication(user);
+    }
     await delay(200);
     if (!hiddenPosts.includes(postId)) {
       hiddenPosts.push(postId);
@@ -347,7 +358,10 @@ async unsavePost(postId, user) {
     return true;
   },
   
-  async unhidePost(postId) {
+  async unhidePost(postId, user) {
+    if (user) {
+      checkAuthentication(user);
+    }
     await delay(200);
     hiddenPosts = hiddenPosts.filter(id => id !== postId);
     localStorage.setItem('hiddenPosts', JSON.stringify(hiddenPosts));
