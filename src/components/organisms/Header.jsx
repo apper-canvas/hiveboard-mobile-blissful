@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useAuth } from "@/hooks/useAuth";
+import { messageService } from "@/services/api/messageService";
 import { cn } from "@/utils/cn";
+import { notificationService } from "@/services/api/notificationService";
 import ApperIcon from "@/components/ApperIcon";
 import SearchBar from "@/components/molecules/SearchBar";
 import PostCreator from "@/components/organisms/PostCreator";
 import Button from "@/components/atoms/Button";
-import { notificationService } from "@/services/api/notificationService";
-import { messageService } from "@/services/api/messageService";
 // Notification Button Component
 const NotificationButton = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector(state => state.user);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +38,37 @@ const NotificationButton = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleNotificationClick = () => {
+const handleNotificationClick = () => {
+    if (!user) {
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to access notifications. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
+      return;
+    }
+    if (!user?.isAuthenticated) {
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to access notifications. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
+      return;
+    }
     navigate('/notifications');
   };
 
@@ -64,7 +96,9 @@ const NotificationButton = () => {
 };
 
 const MessageButton = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector(state => state.user);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isPolling, setIsPolling] = useState(true);
@@ -110,9 +144,38 @@ useEffect(() => {
   }, [isPolling]);
 
   const handleMessageClick = () => {
+if (!user) {
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to access messages. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
+      return;
+    }
+    if (!user?.isAuthenticated) {
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to access messages. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
+      return;
+    }
     navigate('/messages');
   };
-
   return (
     <button
       onClick={handleMessageClick}

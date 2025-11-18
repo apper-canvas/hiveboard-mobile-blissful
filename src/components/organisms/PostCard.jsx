@@ -28,11 +28,33 @@ const PostCard = ({ post, className, onPostUpdate }) => {
   const [timeRemaining, setTimeRemaining] = useState('');
 const handleVote = async (voteType) => {
     if (!user) {
-      toast.error('You must be logged in to vote');
+const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to vote post. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
       return;
     }
     if (!user?.isAuthenticated) {
-      toast.error("You need to login first to perform this operation");
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to vote post. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
       return;
     }
     
@@ -52,12 +74,34 @@ const handleVote = async (voteType) => {
     }
   };
 const handlePollVote = async (optionIndex) => {
-    if (!user) {
-      toast.error('You must be logged in to vote');
+if (!user) {
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to vote post. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
       return;
     }
     if (!user?.isAuthenticated) {
-      toast.error("You need to login first to perform this operation");
+      const errorToast = toast.error(
+        <div 
+          className="cursor-pointer" 
+          onClick={() => {
+            toast.dismiss();
+            navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }}
+        >
+          You must logged in to vote post. Click here to login.
+        </div>,
+        { autoClose: 5000 }
+      );
       return;
     }
     
