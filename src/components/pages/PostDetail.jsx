@@ -1,20 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatDistanceToNow, isValid } from "date-fns";
-import { postService } from "@/services/api/postService";
-import { commentService } from "@/services/api/commentService";
-import { awardService } from "@/services/api/awardService";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { cn } from "@/utils/cn";
+import { commentService } from "@/services/api/commentService";
+import { postService } from "@/services/api/postService";
+import { awardService } from "@/services/api/awardService";
 import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Empty from "@/components/ui/Empty";
+import CommentSection from "@/components/organisms/CommentSection";
 import AwardDisplay from "@/components/molecules/AwardDisplay";
 import VoteButtons from "@/components/molecules/VoteButtons";
 import AwardModal from "@/components/molecules/AwardModal";
-import Loading from "@/components/ui/Loading";
-import Empty from "@/components/ui/Empty";
-import ErrorView from "@/components/ui/ErrorView";
-import CommentSection from "@/components/organisms/CommentSection";
+import { cn } from "@/utils/cn";
 export default function PostDetail() {
   const { postId } = useParams();
   const navigate = useNavigate();
@@ -286,12 +286,12 @@ return (
                 <ApperIcon name="Gift" className="w-4 h-4" />
                 <span>Award</span>
               </button>
-              <button className="flex items-center gap-2 hover:text-primary transition-colors">
+<button className="flex items-center gap-2 hover:text-primary transition-colors">
                 <ApperIcon name="Flag" className="w-4 h-4" />
                 <span>Report</span>
               </button>
             </div>
-</div>
+          </div>
         </div>
       </div>
 
