@@ -54,13 +54,31 @@ async getAll(filter = "hot", limit = 10, offset = 0, postType = "all") {
     return finalPosts.slice(offset, offset + limit);
   },
 
-  async getById(id) {
+async getById(id) {
     await delay(200);
+    
+    if (!id || isNaN(parseInt(id))) {
+      throw new Error("Invalid post ID provided");
+    }
+    
     const post = posts.find(p => p.Id === parseInt(id));
     if (!post) {
       throw new Error("Post not found");
     }
-    return { ...post };
+    
+    // Ensure the post has all required fields
+    const safePost = {
+      ...post,
+      upvotes: post.upvotes || 0,
+      downvotes: post.downvotes || 0,
+      likes: post.likes || 0,
+      commentCount: post.commentCount || 0,
+      userVote: post.userVote || null,
+      isLiked: post.isLiked || false,
+      timestamp: post.timestamp || Date.now()
+    };
+    
+    return safePost;
   },
 
 async getByCommunity(communityName, filter = "hot", limit = 10, offset = 0, postType = "all") {

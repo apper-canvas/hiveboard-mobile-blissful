@@ -31,34 +31,55 @@ export default function PostDetail() {
   const [commentCount, setCommentCount] = useState(0);
   // Wrap loadPost in useCallback to stabilize the reference
 const loadPost = useCallback(async () => {
+    // Early validation
+    if (!postId) {
+      setError('No post ID provided');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
       
-      // Fetch post with parseInt to ensure correct type
-      const postData = await postService.getById(parseInt(postId));
+      // Validate postId before making request
+      const numericPostId = parseInt(postId);
+      if (isNaN(numericPostId)) {
+        throw new Error('Invalid post ID format');
+      }
+      
+      // Fetch post with validated ID
+      const postData = await postService.getById(numericPostId);
       
       if (!postData) {
         setError('Post not found');
         setPost(null);
-        setLoading(false);
         return;
       }
       
       setPost(postData);
-      setLoading(false); // Clear loading immediately after post is set
       
-      // Fetch awards for this post
-      const awards = await awardService.getPostAwards(postData.Id);
-      setPostAwards(awards || []);
-      
-      // Check if user can award
-      setCanAward(user?.Id !== postData.userId);
+      // Fetch additional data in parallel to avoid blocking UI
+      try {
+        const [awards] = await Promise.allSettled([
+          awardService.getPostAwards(postData.Id)
+        ]);
+        
+        setPostAwards(awards.status === 'fulfilled' ? (awards.value || []) : []);
+        
+        // Check if user can award
+        setCanAward(user?.Id !== postData.userId && !!user?.Id);
+      } catch (additionalDataError) {
+        // Don't fail the entire load for auxiliary data
+        console.warn('Error loading additional post data:', additionalDataError);
+      }
       
     } catch (err) {
       console.error('Error loading post:', err);
       setError(err?.message || 'Failed to load post');
       setPost(null);
+    } finally {
+      // Always clear loading state
       setLoading(false);
     }
   }, [postId, user?.Id]);
