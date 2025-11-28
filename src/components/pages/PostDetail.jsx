@@ -164,12 +164,17 @@ const handleHide = async () => {
     );
   }
 
-  const getContentTypeIcon = () => {
-    switch (post.contentType) {
+const getContentTypeIcon = () => {
+    if (!post?.contentType) return "FileText";
+    switch (post.contentType.toLowerCase()) {
       case "image":
         return "Image";
+      case "video":
+        return "Video";
       case "link":
         return "Link";
+      case "poll":
+        return "BarChart3";
       default:
         return "FileText";
     }
